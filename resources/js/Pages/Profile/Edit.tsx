@@ -17,12 +17,11 @@ export default function Edit({
                 <UpdateProfileInformationForm
                     mustVerifyEmail={mustVerifyEmail}
                     status={status}
-                    className="max-w-xl"
                 />
 
-                <UpdatePasswordForm className="max-w-xl" />
+                <UpdatePasswordForm />
 
-                <DeleteUserForm className="max-w-xl" />
+                <DeleteUserForm />
             </div>
         </AuthenticatedLayout>
     );
