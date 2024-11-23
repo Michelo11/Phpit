@@ -1,11 +1,10 @@
-import Checkbox from '@/Components/Checkbox';
-import InputError from '@/Components/InputError';
-import InputLabel from '@/Components/InputLabel';
-import PrimaryButton from '@/Components/PrimaryButton';
-import TextInput from '@/Components/TextInput';
-import GuestLayout from '@/Layouts/GuestLayout';
-import { Head, Link, useForm } from '@inertiajs/react';
-import { FormEventHandler } from 'react';
+import InputError from "@/Components/InputError";
+import { Button } from "@/Components/Ui/Button";
+import { Checkbox } from "@/Components/Ui/Checkbox";
+import { Input } from "@/Components/Ui/Input";
+import GuestLayout from "@/Layouts/GuestLayout";
+import { Head, Link, useForm } from "@inertiajs/react";
+import { FormEventHandler } from "react";
 
 export default function Login({
     status,
@@ -15,16 +14,16 @@ export default function Login({
     canResetPassword: boolean;
 }) {
     const { data, setData, post, processing, errors, reset } = useForm({
-        email: '',
-        password: '',
+        email: "",
+        password: "",
         remember: false,
     });
 
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
 
-        post(route('login'), {
-            onFinish: () => reset('password'),
+        post(route("login"), {
+            onFinish: () => reset("password"),
         });
     };
 
@@ -33,40 +32,37 @@ export default function Login({
             <Head title="Log in" />
 
             {status && (
-                <div className="mb-4 text-sm font-medium text-green-600">
+                <div className="mb-4 text-sm font-medium text-success">
                     {status}
                 </div>
             )}
 
             <form onSubmit={submit}>
                 <div>
-                    <InputLabel htmlFor="email" value="Email" />
-
-                    <TextInput
-                        id="email"
+                    <Input
+                        placeholder="Email"
                         type="email"
+                        id="email"
                         name="email"
-                        value={data.email}
                         className="mt-1 block w-full"
-                        autoComplete="username"
-                        isFocused={true}
-                        onChange={(e) => setData('email', e.target.value)}
+                        value={data.email}
+                        onChange={(e) => setData("email", e.target.value)}
+                        required
                     />
 
                     <InputError message={errors.email} className="mt-2" />
                 </div>
 
                 <div className="mt-4">
-                    <InputLabel htmlFor="password" value="Password" />
-
-                    <TextInput
-                        id="password"
+                    <Input
+                        placeholder="Password"
                         type="password"
+                        id="password"
                         name="password"
-                        value={data.password}
                         className="mt-1 block w-full"
-                        autoComplete="current-password"
-                        onChange={(e) => setData('password', e.target.value)}
+                        value={data.password}
+                        onChange={(e) => setData("password", e.target.value)}
+                        required
                     />
 
                     <InputError message={errors.password} className="mt-2" />
@@ -77,31 +73,46 @@ export default function Login({
                         <Checkbox
                             name="remember"
                             checked={data.remember}
-                            onChange={(e) =>
-                                setData('remember', e.target.checked)
+                            onCheckedChange={(value: boolean) =>
+                                setData("remember", value)
                             }
                         />
-                        <span className="ms-2 text-sm text-gray-600 dark:text-gray-400">
-                            Remember me
-                        </span>
+
+                        <span className="ms-2 muted">Remember me</span>
                     </label>
                 </div>
 
-                <div className="mt-4 flex items-center justify-end">
-                    {canResetPassword && (
-                        <Link
-                            href={route('password.request')}
-                            className="rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:text-gray-400 dark:hover:text-gray-100 dark:focus:ring-offset-gray-800"
-                        >
-                            Forgot your password?
-                        </Link>
-                    )}
+                <div className="mt-4 gap-4 flex flex-col justify-end">
+                    <div className="flex justify-between items-center">
+                        {canResetPassword && (
+                            <Link
+                                href={route("password.request")}
+                                className="muted hover:underline"
+                            >
+                                Forgot your password?
+                            </Link>
+                        )}
 
-                    <PrimaryButton className="ms-4" disabled={processing}>
-                        Log in
-                    </PrimaryButton>
+                        <p className="muted">
+                            Don't have an account?{" "}
+                            <Link
+                                href={route("register")}
+                                className="hover:underline"
+                            >
+                                Register
+                            </Link>
+                        </p>
+                    </div>
+
+                    <Button disabled={processing}>Log in</Button>
                 </div>
             </form>
+
+            <div className="mt-4">
+                <Button asChild className="w-full" variant="outline">
+                    <a href="/auth/redirect">Github</a>
+                </Button>
+            </div>
         </GuestLayout>
     );
 }
