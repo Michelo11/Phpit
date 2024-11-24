@@ -5,7 +5,7 @@ import { Textarea } from "@/Components/Ui/Textarea";
 import { Post } from "@/types";
 import { Transition } from "@headlessui/react";
 import { useForm } from "@inertiajs/react";
-import { FormEventHandler } from "react";
+import { FormEventHandler, useRef } from "react";
 
 export default function ManagePost({
     className = "",
@@ -22,6 +22,8 @@ export default function ManagePost({
     action: "create" | "update";
     setEditing?: (editing: boolean) => void;
 }) {
+    const fileInputRef = useRef<HTMLInputElement | null>(null);
+
     const {
         data,
         setData,
@@ -35,6 +37,7 @@ export default function ManagePost({
     } = useForm({
         title: postItem?.title || "",
         content: postItem?.content || "",
+        image: postItem?.image || null,
     });
 
     const createPost: FormEventHandler = (e) => {
@@ -99,8 +102,30 @@ export default function ManagePost({
                     <InputError message={errors.content} className="mt-2" />
                 </div>
 
+                <input
+                    type="file"
+                    ref={fileInputRef}
+                    onChange={(e) => {
+                        if (e.target.files) {
+                            setData("image", e.target.files[0]);
+                        }
+                    }}
+                    hidden
+                />
+
                 <div className="flex items-center gap-4">
                     <div className="flex items-center gap-4">
+                        {(action === "create" ||
+                            (action === "update" && data.image)) && (
+                            <Button
+                                type="button"
+                                variant="outline"
+                                onClick={() => fileInputRef.current?.click()}
+                            >
+                                {data.image ? "Change" : "Upload"} Image
+                            </Button>
+                        )}
+
                         <Button disabled={processing}>Save</Button>
 
                         {action === "update" && (

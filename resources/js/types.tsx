@@ -4,4 +4,5 @@ export type Post = {
     content: string;
     created_at: string;
     updated_at: string;
+    image?: File,
 }

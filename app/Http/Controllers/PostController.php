@@ -7,6 +7,7 @@ use Illuminate\Http\RedirectResponse;
 use Inertia\Inertia;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Response;
 
 class PostController extends Controller
@@ -29,7 +30,13 @@ class PostController extends Controller
         $valitated = $request->validate([
             'title' => 'required|string|max:50',
             'content' => 'required|string|max:255',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
+
+        if ($request->hasFile('image')) {
+            $valitated['image'] = Storage::disk('public')->put('images', $request->file('image'));
+        }
+
         $request->user()->posts()->create($valitated);
 
         return redirect()->route('posts.index');
@@ -42,7 +49,17 @@ class PostController extends Controller
         $valitated = $request->validate([
             'title' => 'required|string|max:50',
             'content' => 'required|string|max:255',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
+
+        if ($request->hasFile('image')) {
+            if ($post->image) {
+                Storage::disk('public')->delete($post->image);
+            }
+    
+            $validated['image'] = Storage::disk('public')->put('images', $request->file('image'));
+        }
+
         $post->update($valitated);
 
         return redirect()->route('posts.index');

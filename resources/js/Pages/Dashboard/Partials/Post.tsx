@@ -45,9 +45,16 @@ export default function PostComponent({
                 </div>
             </header>
 
-            <div className="mt-6">
-                <p>{post.content}</p>
-            </div>
+            <p className="mt-6">{post.content}</p>
+
+            {post.image && (
+                <img
+                    src={`storage/${post.image}`}
+                    alt={post.title}
+                    className="w-1/3 mt-6"
+                    draggable={false}
+                />
+            )}
 
             {editing && (
                 <ManagePost
