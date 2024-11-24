@@ -10,15 +10,11 @@ use Illuminate\Support\Facades\Auth;
 
 Route::get('/', function () {
     if (Auth::check()) {
-        return redirect('/dashboard');
+        return redirect('/posts');
     }
 
     return redirect('/login');
 });
-
-Route::get('/dashboard', function () {
-    return Inertia::render('Dashboard/Index');
-})->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -27,7 +23,7 @@ Route::middleware('auth')->group(function () {
 });
 
 Route::resource('posts', PostController::class)
-    ->only(['index', 'store'])
+    ->only(['index', 'store', 'update'])
     ->middleware(['auth', 'verified']);
 
 Route::get('/auth/redirect', function () {
@@ -50,7 +46,7 @@ Route::get('/auth/callback', function () {
 
     Auth::login($user);
 
-    return redirect('/dashboard');
+    return redirect('/posts');
 });
 
 require __DIR__.'/auth.php';

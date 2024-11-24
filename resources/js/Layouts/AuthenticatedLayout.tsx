@@ -31,11 +31,11 @@ export default function Authenticated({
                                 />
                             </Link>
 
-                            <Link href={route("dashboard")}>Dashboard</Link>
+                            <Link href={route("posts.index")}>Dashboard</Link>
                         </div>
 
                         <DropdownMenu>
-                            <DropdownMenuTrigger>
+                            <DropdownMenuTrigger asChild>
                                 <Button variant="outline" className="w-32">
                                     {user.name}
                                 </Button>

@@ -2,25 +2,39 @@ import InputError from "@/Components/InputError";
 import { Button } from "@/Components/Ui/Button";
 import { Input } from "@/Components/Ui/Input";
 import { Textarea } from "@/Components/Ui/Textarea";
+import { Post } from "@/types";
 import { Transition } from "@headlessui/react";
 import { useForm } from "@inertiajs/react";
-import { FormEventHandler, useRef } from "react";
+import { FormEventHandler } from "react";
 
-export default function ManagePost({ className = "" }: { className?: string }) {
-    const titleInput = useRef<HTMLInputElement>(null);
-    const contentInput = useRef<HTMLTextAreaElement>(null);
-
+export default function ManagePost({
+    className = "",
+    postItem,
+    title,
+    description,
+    action,
+    setEditing,
+}: {
+    className?: string;
+    title: string;
+    postItem?: Post & { user: { name: string; id: number } };
+    description: string;
+    action: "create" | "update";
+    setEditing?: (editing: boolean) => void;
+}) {
     const {
         data,
         setData,
         errors,
         post,
+        patch,
         reset,
         processing,
         recentlySuccessful,
+        clearErrors,
     } = useForm({
-        title: "",
-        content: "",
+        title: postItem?.title || "",
+        content: postItem?.content || "",
     });
 
     const createPost: FormEventHandler = (e) => {
@@ -29,9 +43,16 @@ export default function ManagePost({ className = "" }: { className?: string }) {
         post(route("posts.store"), {
             preserveScroll: true,
             onSuccess: () => reset(),
-            onError: (errors) => {
-                if (errors.title) titleInput.current?.focus();
-                else if (errors.content) contentInput.current?.focus();
+        });
+    };
+
+    const updatePost: FormEventHandler = (e) => {
+        e.preventDefault();
+        patch(route("posts.update", postItem?.id), {
+            onSuccess: () => {
+                if (setEditing) setEditing(false);
+                reset();
+                clearErrors();
             },
         });
     };
@@ -39,20 +60,20 @@ export default function ManagePost({ className = "" }: { className?: string }) {
     return (
         <section className={className}>
             <header>
-                <h3>Create Post</h3>
+                <h3>{title}</h3>
 
-                <p className="mt-1 muted">
-                    Write a new post to share with your friends.
-                </p>
+                <p className="mt-1 muted">{description}</p>
             </header>
 
-            <form onSubmit={createPost} className="mt-6 space-y-6">
+            <form
+                onSubmit={action === "create" ? createPost : updatePost}
+                className="mt-6 space-y-6"
+            >
                 <div>
                     <Input
                         placeholder="Title"
                         type="text"
                         id="title"
-                        ref={titleInput}
                         name="title"
                         className="mt-1 block w-full"
                         value={data.title}
@@ -68,7 +89,6 @@ export default function ManagePost({ className = "" }: { className?: string }) {
                     <Textarea
                         placeholder="Content"
                         id="content"
-                        ref={contentInput}
                         name="content"
                         className="mt-1 block w-full"
                         value={data.content}
@@ -80,7 +100,21 @@ export default function ManagePost({ className = "" }: { className?: string }) {
                 </div>
 
                 <div className="flex items-center gap-4">
-                    <Button disabled={processing}>Save</Button>
+                    <div className="flex items-center gap-4">
+                        <Button disabled={processing}>Save</Button>
+
+                        {action === "update" && (
+                            <button
+                                onClick={() => {
+                                    if (setEditing) setEditing(false);
+                                    reset();
+                                    clearErrors();
+                                }}
+                            >
+                                Cancel
+                            </button>
+                        )}
+                    </div>
 
                     <Transition
                         show={recentlySuccessful}

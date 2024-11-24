@@ -6,6 +6,7 @@ use App\Models\Post;
 use Illuminate\Http\RedirectResponse;
 use Inertia\Inertia;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Inertia\Response;
 
 class PostController extends Controller
@@ -16,7 +17,7 @@ class PostController extends Controller
     public function index(): Response
     {
         return Inertia::render('Dashboard/Index', [
-            'posts' => Post::all(),
+            'posts' => Post::with('user:id,name')->latest()->get(),
         ]);
     }
 
@@ -31,6 +32,19 @@ class PostController extends Controller
         ]);
         $request->user()->posts()->create($valitated);
 
-        return redirect()->route('dashboard');
+        return redirect()->route('posts.index');
+    }
+
+    public function update (Request $request, Post $post): RedirectResponse
+    {
+        Gate::authorize('update', $post);
+
+        $valitated = $request->validate([
+            'title' => 'required|string|max:50',
+            'content' => 'required|string|max:255',
+        ]);
+        $post->update($valitated);
+
+        return redirect()->route('posts.index');
     }
 }
