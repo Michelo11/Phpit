@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Laravel\Socialite\Facades\Socialite;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 Route::get('/', function () {
     if (Auth::check()) {
@@ -40,6 +41,7 @@ Route::get('/auth/callback', function () {
     ], [
         'name' => $githubUser->name,
         'email' => $githubUser->email,
+        'avatar' => $githubUser->avatar,
         'github_token' => $githubUser->token,
         'github_refresh_token' => $githubUser->refreshToken,
     ]);

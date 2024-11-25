@@ -35,10 +35,13 @@ class RegisteredUserController extends Controller
             'email' => 'required|string|lowercase|email|max:255|unique:'.User::class,
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
+        
+        $avatar = "https://ui-avatars.com/api/?name=".urlencode($request->name)."&background=random";
 
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
+            'avatar' => $avatar,
             'password' => Hash::make($request->password),
         ]);
 

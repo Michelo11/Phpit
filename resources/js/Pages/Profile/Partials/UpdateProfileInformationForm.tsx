@@ -2,8 +2,8 @@ import InputError from "@/Components/InputError";
 import { Button } from "@/Components/Ui/Button";
 import { Input } from "@/Components/Ui/Input";
 import { Transition } from "@headlessui/react";
-import { Link, useForm, usePage } from "@inertiajs/react";
-import { FormEventHandler } from "react";
+import { Link, router, useForm, usePage } from "@inertiajs/react";
+import { FormEventHandler, useRef } from "react";
 
 export default function UpdateProfileInformation({
     mustVerifyEmail,
@@ -16,16 +16,21 @@ export default function UpdateProfileInformation({
 }) {
     const user = usePage().props.auth.user;
 
-    const { data, setData, patch, errors, processing, recentlySuccessful } =
-        useForm({
-            name: user.name,
-            email: user.email,
-        });
+    const fileInputRef = useRef<HTMLInputElement | null>(null);
+
+    const { data, setData, errors, processing, recentlySuccessful } = useForm({
+        name: user.name,
+        email: user.email,
+        avatar: null as File | null,
+    });
 
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
 
-        patch(route("profile.update"));
+        router.post(route("profile.update"), {
+            ...data,
+            _method: "patch",
+        });
     };
 
     return (
@@ -39,6 +44,35 @@ export default function UpdateProfileInformation({
             </header>
 
             <form onSubmit={submit} className="mt-6 space-y-6">
+                <input
+                    type="file"
+                    name="avatar"
+                    id="avatar"
+                    ref={fileInputRef}
+                    onChange={(e) => {
+                        if (e.target.files) {
+                            setData("avatar", e.target.files[0]);
+                        }
+                    }}
+                    hidden
+                />
+
+                <button
+                    type="button"
+                    onClick={() => fileInputRef.current?.click()}
+                >
+                    <img
+                        src={
+                            data.avatar
+                                ? URL.createObjectURL(data.avatar)
+                                : user.avatar
+                        }
+                        alt="Profile photo"
+                        className="rounded-xl h-20 w-20"
+                        draggable="false"
+                    />
+                </button>
+
                 <div>
                     <Input
                         placeholder="Name"

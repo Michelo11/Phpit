@@ -37,6 +37,12 @@ export default function Authenticated({
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
                                 <Button variant="outline" className="w-32">
+                                    <img
+                                        src={user.avatar}
+                                        alt="Profile photo"
+                                        className="w-6 h-6 rounded-xl"
+                                        draggable="false"
+                                    />
                                     {user.name}
                                 </Button>
                             </DropdownMenuTrigger>
