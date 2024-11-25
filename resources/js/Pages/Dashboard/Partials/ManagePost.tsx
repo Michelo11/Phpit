@@ -4,8 +4,8 @@ import { Input } from "@/Components/Ui/Input";
 import { Textarea } from "@/Components/Ui/Textarea";
 import { Post } from "@/types";
 import { Transition } from "@headlessui/react";
-import { useForm } from "@inertiajs/react";
-import { FormEventHandler, useRef } from "react";
+import { router, useForm } from "@inertiajs/react";
+import { FormEventHandler, useRef, useState } from "react";
 
 export default function ManagePost({
     className = "",
@@ -23,13 +23,13 @@ export default function ManagePost({
     setEditing?: (editing: boolean) => void;
 }) {
     const fileInputRef = useRef<HTMLInputElement | null>(null);
+    const [customError, setCustomError] = useState<string | null>(null);
 
     const {
         data,
         setData,
         errors,
         post,
-        patch,
         reset,
         processing,
         recentlySuccessful,
@@ -37,11 +37,21 @@ export default function ManagePost({
     } = useForm({
         title: postItem?.title || "",
         content: postItem?.content || "",
-        image: postItem?.image || null,
+        image: null as File | null,
     });
+
+    const validateForm = () => {
+        if (!data.content && !data.image) {
+            setCustomError("Please provide either content or an image.");
+            return false;
+        }
+        setCustomError(null);
+        return true;
+    };
 
     const createPost: FormEventHandler = (e) => {
         e.preventDefault();
+        if (!validateForm()) return;
 
         post(route("posts.store"), {
             preserveScroll: true,
@@ -51,20 +61,28 @@ export default function ManagePost({
 
     const updatePost: FormEventHandler = (e) => {
         e.preventDefault();
-        patch(route("posts.update", postItem?.id), {
-            onSuccess: () => {
-                if (setEditing) setEditing(false);
-                reset();
-                clearErrors();
+        if (!validateForm()) return;
+
+        router.post(
+            route("posts.update", postItem?.id),
+            {
+                ...data,
+                _method: "patch",
             },
-        });
+            {
+                onSuccess: () => {
+                    if (setEditing) setEditing(false);
+                    reset();
+                    clearErrors();
+                },
+            }
+        );
     };
 
     return (
         <section className={className}>
             <header>
                 <h3>{title}</h3>
-
                 <p className="mt-1 muted">{description}</p>
             </header>
 
@@ -96,7 +114,6 @@ export default function ManagePost({
                         className="mt-1 block w-full"
                         value={data.content}
                         onChange={(e) => setData("content", e.target.value)}
-                        required
                     />
 
                     <InputError message={errors.content} className="mt-2" />
@@ -104,6 +121,8 @@ export default function ManagePost({
 
                 <input
                     type="file"
+                    name="image"
+                    id="image"
                     ref={fileInputRef}
                     onChange={(e) => {
                         if (e.target.files) {
@@ -115,21 +134,21 @@ export default function ManagePost({
 
                 <div className="flex items-center gap-4">
                     <div className="flex items-center gap-4">
-                        {(action === "create" ||
-                            (action === "update" && data.image)) && (
-                            <Button
-                                type="button"
-                                variant="outline"
-                                onClick={() => fileInputRef.current?.click()}
-                            >
-                                {data.image ? "Change" : "Upload"} Image
-                            </Button>
-                        )}
+                        <Button
+                            type="button"
+                            variant="outline"
+                            onClick={() => fileInputRef.current?.click()}
+                        >
+                            {data.image ? "Change" : "Upload"} Image
+                        </Button>
 
-                        <Button disabled={processing}>Save</Button>
+                        <Button type="submit" disabled={processing}>
+                            Save
+                        </Button>
 
                         {action === "update" && (
                             <button
+                                type="reset"
                                 onClick={() => {
                                     if (setEditing) setEditing(false);
                                     reset();
@@ -151,6 +170,10 @@ export default function ManagePost({
                         <p className="muted">Saved.</p>
                     </Transition>
                 </div>
+
+                {customError && (
+                    <InputError message={customError} className="mt-2" />
+                )}
             </form>
         </section>
     );

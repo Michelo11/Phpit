@@ -27,40 +27,59 @@ class PostController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
-        $valitated = $request->validate([
+        $validated = $request->validate([
             'title' => 'required|string|max:50',
-            'content' => 'required|string|max:255',
+            'content' => 'nullable|string|max:255',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
         if ($request->hasFile('image')) {
-            $valitated['image'] = Storage::disk('public')->put('images', $request->file('image'));
+            $validated['image'] = Storage::disk('public')->put('images', $request->file('image'));
         }
 
-        $request->user()->posts()->create($valitated);
+        $request->user()->posts()->create($validated);
 
         return redirect()->route('posts.index');
     }
 
+    /**
+     * Update the specified resource in storage.
+     */
     public function update (Request $request, Post $post): RedirectResponse
     {
         Gate::authorize('update', $post);
 
-        $valitated = $request->validate([
-            'title' => 'required|string|max:50',
-            'content' => 'required|string|max:255',
+        $validated = $request->validate([
+            'title' => 'nullable|string|max:50',
+            'content' => 'nullable|string|max:255',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
         if ($request->hasFile('image')) {
-            if ($post->image) {
+            if ($post->image)
                 Storage::disk('public')->delete($post->image);
-            }
-    
+
             $validated['image'] = Storage::disk('public')->put('images', $request->file('image'));
+        } else {
+            $validated['image'] = $post->image;
         }
 
-        $post->update($valitated);
+        $post->update($validated);
+ 
+        return redirect()->route('posts.index');
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy(Post $post): RedirectResponse
+    {
+        Gate::authorize('delete', $post);
+
+        if ($post->image)
+            Storage::disk('public')->delete($post->image);
+
+        $post->delete();
 
         return redirect()->route('posts.index');
     }

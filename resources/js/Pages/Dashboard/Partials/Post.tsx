@@ -1,10 +1,19 @@
 import { Post } from "@/types";
-import { usePage } from "@inertiajs/react";
+import { Link, usePage } from "@inertiajs/react";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { useState } from "react";
-import { FaPencilAlt } from "react-icons/fa";
+import { FaArrowDown } from "react-icons/fa";
 import ManagePost from "./ManagePost";
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from "@/Components/Ui/Dropdown";
+import { Button } from "@/Components/Ui/Button";
 
 dayjs.extend(relativeTime);
 
@@ -20,29 +29,48 @@ export default function PostComponent({
 
     return (
         <section className={className}>
-            <header>
-                <div className="flex items-center gap-4">
+            <header className="flex items-center justify-between">
+                <div>
                     <h3>{post.title}</h3>
 
-                    {auth.user && auth.user.id === post.user.id && (
-                        <button
-                            className="text-sm"
-                            onClick={() => setEditing(true)}
-                        >
-                            <FaPencilAlt />
-                        </button>
-                    )}
+                    <div className="flex items-center gap-1">
+                        <p className="mt-1 muted">
+                            {dayjs(post.created_at).fromNow()} by{" "}
+                            {post.user.name}
+                        </p>
+
+                        {post.created_at !== post.updated_at && (
+                            <p className="mt-1 muted">&middot; edited</p>
+                        )}
+                    </div>
                 </div>
 
-                <div className="flex items-center gap-1">
-                    <p className="mt-1 muted">
-                        {dayjs(post.created_at).fromNow()} by {post.user.name}
-                    </p>
-
-                    {post.created_at !== post.updated_at && (
-                        <p className="mt-1 muted">&middot; edited</p>
-                    )}
-                </div>
+                {auth.user && auth.user.id === post.user.id && (
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <Button variant="outline" className="w-32">
+                                <FaArrowDown />
+                            </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent className="w-32">
+                            <DropdownMenuLabel>Manage</DropdownMenuLabel>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem asChild>
+                                <button onClick={() => setEditing(true)} className="w-full">
+                                    Edit
+                                </button>
+                            </DropdownMenuItem>
+                            <DropdownMenuItem asChild>
+                                <Link
+                                    href={route("posts.destroy", post.id)}
+                                    method="delete"
+                                >
+                                    Delete
+                                </Link>
+                            </DropdownMenuItem>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+                )}
             </header>
 
             <p className="mt-6">{post.content}</p>
