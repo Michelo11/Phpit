@@ -31,7 +31,10 @@ export default function ResetPassword({
         <GuestLayout>
             <Head title="Reset Password" />
 
-            <form onSubmit={submit}>
+            <form
+                onSubmit={submit}
+                className="border border-card p-4 sm:rounded-xl"
+            >
                 <div>
                     <Input
                         placeholder="Email"

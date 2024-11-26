@@ -15,10 +15,11 @@ class PostController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(): Response
+    public function index(Request $request): Response
     {
         return Inertia::render('Dashboard/Index', [
-            'posts' => Post::with('user:id,name')->latest()->get(),
+            'posts' => Post::with('user:id,name,avatar')->latest()->get(),
+            'followers' => $request->user()->followers()->get(),
         ]);
     }
 
@@ -66,7 +67,7 @@ class PostController extends Controller
 
         $post->update($validated);
  
-        return redirect()->route('posts.index');
+        return redirect()->back();
     }
 
     /**
@@ -81,6 +82,6 @@ class PostController extends Controller
 
         $post->delete();
 
-        return redirect()->route('posts.index');
+        return redirect()->back();
     }
 }

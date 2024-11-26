@@ -1,3 +1,4 @@
+import NavLink from "@/Components/NavLink";
 import { Button } from "@/Components/Ui/Button";
 import {
     DropdownMenu,
@@ -31,7 +32,22 @@ export default function Authenticated({
                                 />
                             </Link>
 
-                            <Link href={route("posts.index")}>Dashboard</Link>
+                            <NavLink
+                                href={route("posts.index")}
+                                active={route().current("posts.index")}
+                            >
+                                Dashboard
+                            </NavLink>
+
+                            <NavLink
+                                href={`/profile/${user.id}`}
+                                active={
+                                    route().current("profile.view") &&
+                                    route().params.id === user.id.toString()
+                                }
+                            >
+                                Profile
+                            </NavLink>
                         </div>
 
                         <DropdownMenu>
@@ -40,7 +56,7 @@ export default function Authenticated({
                                     <img
                                         src={user.avatar}
                                         alt="Profile photo"
-                                        className="w-6 h-6 rounded-xl"
+                                        className="w-6 h-6 rounded-md"
                                         draggable="false"
                                     />
                                     {user.name}

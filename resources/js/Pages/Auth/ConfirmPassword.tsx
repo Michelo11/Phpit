@@ -22,30 +22,37 @@ export default function ConfirmPassword() {
         <GuestLayout>
             <Head title="Confirm Password" />
 
-            <div className="mb-4 muted">
-                This is a secure area of the application. Please confirm your
-                password before continuing.
-            </div>
-
-            <form onSubmit={submit}>
-                <div className="mt-4">
-                    <Input
-                        placeholder="Password"
-                        id="password"
-                        type="password"
-                        name="password"
-                        value={data.password}
-                        onChange={(e) => setData("password", e.target.value)}
-                        required
-                    />
-
-                    <InputError message={errors.password} className="mt-2" />
+            <div className="border border-card p-4 sm:rounded-xl">
+                <div className="mb-4 muted">
+                    This is a secure area of the application. Please confirm
+                    your password before continuing.
                 </div>
 
-                <Button className="mt-4 w-full" disabled={processing}>
-                    Confirm
-                </Button>
-            </form>
+                <form onSubmit={submit}>
+                    <div className="mt-4">
+                        <Input
+                            placeholder="Password"
+                            id="password"
+                            type="password"
+                            name="password"
+                            value={data.password}
+                            onChange={(e) =>
+                                setData("password", e.target.value)
+                            }
+                            required
+                        />
+
+                        <InputError
+                            message={errors.password}
+                            className="mt-2"
+                        />
+                    </div>
+
+                    <Button className="mt-4 w-full" disabled={processing}>
+                        Confirm
+                    </Button>
+                </form>
+            </div>
         </GuestLayout>
     );
 }

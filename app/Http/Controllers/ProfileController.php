@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfileUpdateRequest;
+use App\Models\Post;
 use App\Models\User;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Http\RedirectResponse;
@@ -76,5 +77,31 @@ class ProfileController extends Controller
         $request->session()->regenerateToken();
 
         return Redirect::to('/');
+    }
+
+    /**
+     * Display the user's profile.
+     */
+    public function view(Request $request, string $userId): Response
+    {
+        $user = User::findOrFail($userId);
+        
+        return Inertia::render('Profile/Index', [
+            'user' => $user,
+            'followers' => $request->user()->followers()->get(),
+            'posts' => Post::with('user:id,name,avatar')->where('user_id', $user->id)->latest()->get(),
+        ]);
+    }
+
+    /**
+     * Follow or unfollow a user.
+     */
+    public function toggleFollow(Request $request, string $userId): RedirectResponse
+    {
+        $user = User::findOrFail($userId);
+
+        $user->toggleFollow($request->user());
+
+        return Redirect::back();
     }
 }

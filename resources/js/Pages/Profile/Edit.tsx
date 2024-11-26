@@ -1,9 +1,9 @@
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import { PageProps } from "@/types";
 import { Head } from "@inertiajs/react";
 import DeleteUserForm from "./Partials/DeleteUserForm";
 import UpdatePasswordForm from "./Partials/UpdatePasswordForm";
 import UpdateProfileInformationForm from "./Partials/UpdateProfileInformationForm";
+import { PageProps } from "@/types/index";
 
 export default function Edit({
     mustVerifyEmail,
@@ -17,11 +17,12 @@ export default function Edit({
                 <UpdateProfileInformationForm
                     mustVerifyEmail={mustVerifyEmail}
                     status={status}
+                    className="border border-card p-4 sm:rounded-xl"
                 />
 
-                <UpdatePasswordForm />
+                <UpdatePasswordForm className="border border-card p-4 sm:rounded-xl" />
 
-                <DeleteUserForm />
+                <DeleteUserForm className="border border-card p-4 sm:rounded-xl" />
             </div>
         </AuthenticatedLayout>
     );

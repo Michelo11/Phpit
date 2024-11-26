@@ -31,87 +31,94 @@ export default function Login({
         <GuestLayout>
             <Head title="Log in" />
 
-            {status && (
-                <div className="mb-4 text-sm font-medium text-success">
-                    {status}
-                </div>
-            )}
+            <div className="border border-card p-4 sm:rounded-xl">
+                {status && (
+                    <div className="mb-4 text-sm font-medium text-success">
+                        {status}
+                    </div>
+                )}
 
-            <form onSubmit={submit}>
-                <div>
-                    <Input
-                        placeholder="Email"
-                        type="email"
-                        id="email"
-                        name="email"
-                        className="mt-1 block w-full"
-                        value={data.email}
-                        onChange={(e) => setData("email", e.target.value)}
-                        required
-                    />
-
-                    <InputError message={errors.email} className="mt-2" />
-                </div>
-
-                <div className="mt-4">
-                    <Input
-                        placeholder="Password"
-                        type="password"
-                        id="password"
-                        name="password"
-                        className="mt-1 block w-full"
-                        value={data.password}
-                        onChange={(e) => setData("password", e.target.value)}
-                        required
-                    />
-
-                    <InputError message={errors.password} className="mt-2" />
-                </div>
-
-                <div className="mt-4 block">
-                    <label className="flex items-center">
-                        <Checkbox
-                            name="remember"
-                            checked={data.remember}
-                            onCheckedChange={(value: boolean) =>
-                                setData("remember", value)
-                            }
+                <form onSubmit={submit}>
+                    <div>
+                        <Input
+                            placeholder="Email"
+                            type="email"
+                            id="email"
+                            name="email"
+                            className="mt-1 block w-full"
+                            value={data.email}
+                            onChange={(e) => setData("email", e.target.value)}
+                            required
                         />
 
-                        <span className="ms-2 muted">Remember me</span>
-                    </label>
-                </div>
-
-                <div className="mt-4 gap-4 flex flex-col justify-end">
-                    <div className="flex justify-between items-center">
-                        {canResetPassword && (
-                            <Link
-                                href={route("password.request")}
-                                className="muted hover:underline"
-                            >
-                                Forgot your password?
-                            </Link>
-                        )}
-
-                        <p className="muted">
-                            Don't have an account?{" "}
-                            <Link
-                                href={route("register")}
-                                className="hover:underline"
-                            >
-                                Register
-                            </Link>
-                        </p>
+                        <InputError message={errors.email} className="mt-2" />
                     </div>
 
-                    <Button disabled={processing}>Log in</Button>
-                </div>
-            </form>
+                    <div className="mt-4">
+                        <Input
+                            placeholder="Password"
+                            type="password"
+                            id="password"
+                            name="password"
+                            className="mt-1 block w-full"
+                            value={data.password}
+                            onChange={(e) =>
+                                setData("password", e.target.value)
+                            }
+                            required
+                        />
 
-            <div className="mt-4">
-                <Button asChild className="w-full" variant="outline">
-                    <a href="/auth/redirect">Github</a>
-                </Button>
+                        <InputError
+                            message={errors.password}
+                            className="mt-2"
+                        />
+                    </div>
+
+                    <div className="mt-4 block">
+                        <label className="flex items-center">
+                            <Checkbox
+                                name="remember"
+                                checked={data.remember}
+                                onCheckedChange={(value: boolean) =>
+                                    setData("remember", value)
+                                }
+                            />
+
+                            <span className="ms-2 muted">Remember me</span>
+                        </label>
+                    </div>
+
+                    <div className="mt-4 gap-4 flex flex-col justify-end">
+                        <div className="flex justify-between items-center">
+                            {canResetPassword && (
+                                <Link
+                                    href={route("password.request")}
+                                    className="muted hover:underline"
+                                >
+                                    Forgot your password?
+                                </Link>
+                            )}
+
+                            <p className="muted">
+                                Don't have an account?{" "}
+                                <Link
+                                    href={route("register")}
+                                    className="hover:underline"
+                                >
+                                    Register
+                                </Link>
+                            </p>
+                        </div>
+
+                        <Button disabled={processing}>Log in</Button>
+                    </div>
+                </form>
+
+                <div className="mt-4">
+                    <Button asChild className="w-full" variant="outline">
+                        <a href="/auth/redirect">Github</a>
+                    </Button>
+                </div>
             </div>
         </GuestLayout>
     );
