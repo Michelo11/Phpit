@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Post;
+use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Inertia\Inertia;
 use Illuminate\Http\Request;
@@ -17,8 +18,15 @@ class PostController extends Controller
      */
     public function index(Request $request): Response
     {
+        $posts = Post::with('user:id,name,avatar')->latest()->get();
+        $posts = $posts->sortBy(function ($post) use ($request) {
+            return $request->user()->followers->contains($post->user);
+        }, SORT_REGULAR, true);
+        $posts = $posts->values()->all();
+
         return Inertia::render('Dashboard/Index', [
-            'posts' => Post::with('user:id,name,avatar')->latest()->get(),
+            'posts' => $posts,
+            'recentUsers' => User::latest()->limit(5)->get(),
             'followers' => $request->user()->followers()->get(),
         ]);
     }

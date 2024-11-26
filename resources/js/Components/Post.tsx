@@ -14,6 +14,7 @@ import {
     DropdownMenuTrigger,
 } from "@/Components/Ui/Dropdown";
 import ManagePost from "@/Components/ManagePost";
+import FollowButton from "./FollowButton";
 
 dayjs.extend(relativeTime);
 
@@ -28,19 +29,6 @@ export default function PostComponent({
 }) {
     const { auth } = usePage().props;
     const [editing, setEditing] = useState(false);
-
-    const { post, reset, processing } = useForm({});
-
-    const toggleFollow: FormEventHandler = (e) => {
-        e.preventDefault();
-
-        post(route("profile.toggleFollow", postItem.user.id), {
-            preserveScroll: true,
-            onSuccess: () => {
-                reset();
-            },
-        });
-    };
 
     return (
         <section className={className}>
@@ -105,17 +93,10 @@ export default function PostComponent({
                         </DropdownMenu>
                     )}
 
-                    {auth.user.id !== postItem.user.id && (
-                        <form onSubmit={toggleFollow}>
-                            <Button
-                                className="w-32"
-                                disabled={processing}
-                                variant={following ? "outline" : "default"}
-                            >
-                                {following ? "Unfollow" : "Follow"}
-                            </Button>
-                        </form>
-                    )}
+                    <FollowButton
+                        userId={postItem.user.id}
+                        following={following}
+                    />
                 </div>
             </header>
 
