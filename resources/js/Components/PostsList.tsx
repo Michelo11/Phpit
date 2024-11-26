@@ -1,5 +1,6 @@
 import PostComponent from "@/Components/Post";
 import { Post } from "@/types";
+import { User } from "@/types/index";
 
 export default function PostsList({
     className = "",
@@ -12,7 +13,7 @@ export default function PostsList({
     posts: (Post & { user: { name: string; id: number; avatar: string } })[];
     title: string;
     description: string;
-    followers: { id: number }[];
+    followers: User[];
 }) {
     return (
         <section className={className}>

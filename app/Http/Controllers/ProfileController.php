@@ -89,6 +89,8 @@ class ProfileController extends Controller
         return Inertia::render('Profile/Index', [
             'user' => $user,
             'followers' => $request->user()->followers()->get(),
+            'countFollowers' => $user->followers()->count(),
+            'countFollowing' => $user->followings()->count(),
             'posts' => Post::with('user:id,name,avatar')->where('user_id', $user->id)->latest()->get(),
         ]);
     }

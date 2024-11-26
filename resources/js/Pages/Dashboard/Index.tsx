@@ -1,5 +1,6 @@
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Post } from "@/types";
+import { User } from "@/types/index";
 import { Head } from "@inertiajs/react";
 import ManagePost from "../../Components/ManagePost";
 import PostsList from "../../Components/PostsList";
@@ -9,9 +10,8 @@ export default function Index({
     followers,
 }: {
     posts: (Post & { user: { name: string; id: number; avatar: string } })[];
-    followers: { id: number }[];
+    followers: User[];
 }) {
-    console.log(followers);
     return (
         <AuthenticatedLayout header={<h2>Dashboard</h2>}>
             <Head title="Dashboard" />

@@ -50,7 +50,7 @@ export default function DeleteUserForm({
     return (
         <section className={`space-y-6 ${className}`}>
             <header>
-                <h2>Delete Account</h2>
+                <h3>Delete Account</h3>
 
                 <p className="mt-1 muted">
                     Once your account is deleted, all of its resources and data
