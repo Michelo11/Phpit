@@ -24,7 +24,6 @@ export default function ManagePost({
 }) {
     const fileInputRef = useRef<HTMLInputElement | null>(null);
     const [customError, setCustomError] = useState<string | null>(null);
-
     const {
         data,
         setData,
@@ -39,7 +38,6 @@ export default function ManagePost({
         content: postItem?.content || "",
         image: null as File | null,
     });
-
     const validateForm = () => {
         if (!data.content && !data.image) {
             setCustomError("Please provide either content or an image.");
@@ -48,7 +46,6 @@ export default function ManagePost({
         setCustomError(null);
         return true;
     };
-
     const createPost: FormEventHandler = (e) => {
         e.preventDefault();
         if (!validateForm()) return;
@@ -58,7 +55,6 @@ export default function ManagePost({
             onSuccess: () => reset(),
         });
     };
-
     const updatePost: FormEventHandler = (e) => {
         e.preventDefault();
         if (!validateForm()) return;

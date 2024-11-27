@@ -13,7 +13,6 @@ export default function FollowButton({
 }) {
     const { auth } = usePage().props;
     const { post, reset, processing } = useForm({});
-
     const toggleFollow: FormEventHandler = (e) => {
         e.preventDefault();
 

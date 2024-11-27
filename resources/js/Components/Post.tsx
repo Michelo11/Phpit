@@ -1,9 +1,4 @@
-import { Post } from "@/types/index";
-import { Link, usePage } from "@inertiajs/react";
-import dayjs from "dayjs";
-import relativeTime from "dayjs/plugin/relativeTime";
-import { useState } from "react";
-import { FaArrowDown } from "react-icons/fa";
+import ManagePost from "@/Components/ManagePost";
 import { Button } from "@/Components/Ui/Button";
 import {
     DropdownMenu,
@@ -13,8 +8,14 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/Components/Ui/Dropdown";
-import ManagePost from "@/Components/ManagePost";
+import { Post } from "@/types/index";
+import { Link, useForm, usePage } from "@inertiajs/react";
+import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
+import { ArrowDown, Heart, HeartOff } from "lucide-react";
+import { FormEventHandler, useState } from "react";
 import FollowButton from "./FollowButton";
+import { useLongPress } from "use-long-press";
 
 dayjs.extend(relativeTime);
 
@@ -29,6 +30,20 @@ export default function PostComponent({
 }) {
     const { auth } = usePage().props;
     const [editing, setEditing] = useState(false);
+    const { post, reset, processing } = useForm({});
+    const toggleLike: FormEventHandler = (e) => {
+        e.preventDefault();
+
+        post(route("posts.toggleLike", postItem.id), {
+            preserveScroll: true,
+            onSuccess: () => {
+                reset();
+            },
+        });
+    };
+    const bind = useLongPress(() => {
+        location.href = `/posts/${postItem.id}/likes`;
+    });
 
     return (
         <section className={className}>
@@ -64,7 +79,7 @@ export default function PostComponent({
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
                                 <Button variant="outline" className="w-32">
-                                    <FaArrowDown />
+                                    <ArrowDown />
                                 </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent className="w-32">
@@ -109,6 +124,19 @@ export default function PostComponent({
                     className="w-1/3 mt-6"
                     draggable={false}
                 />
+            )}
+
+            {postItem.user.id !== auth.user.id && (
+                <form onSubmit={toggleLike} className="mt-6">
+                    <button
+                        className="w-32"
+                        type="submit"
+                        disabled={processing}
+                        {...bind()}
+                    >
+                        {postItem.has_liked ? <HeartOff /> : <Heart />}
+                    </button>
+                </form>
             )}
 
             {editing && (

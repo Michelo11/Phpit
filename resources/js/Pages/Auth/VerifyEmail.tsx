@@ -5,7 +5,6 @@ import { FormEventHandler } from "react";
 
 export default function VerifyEmail({ status }: { status?: string }) {
     const { post, processing } = useForm({});
-
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
 

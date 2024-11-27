@@ -15,15 +15,12 @@ export default function UpdateProfileInformation({
     className?: string;
 }) {
     const user = usePage().props.auth.user;
-
     const fileInputRef = useRef<HTMLInputElement | null>(null);
-
     const { data, setData, errors, processing, recentlySuccessful } = useForm({
         name: user.name,
         email: user.email,
         avatar: null as File | null,
     });
-
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
 

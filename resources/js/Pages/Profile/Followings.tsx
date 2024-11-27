@@ -13,8 +13,8 @@ export default function Followings({
     user: User;
 }) {
     return (
-        <AuthenticatedLayout header={<h2>{user.name}'s Followings</h2>}>
-            <Head title={`${user.name}'s Followings`} />
+        <AuthenticatedLayout header={<h2>{user.name}'s followings</h2>}>
+            <Head title={`${user.name}'s followings`} />
 
             <div className="mx-auto max-w-7xl sm:px-6 lg:px-8 flex flex-col gap-4">
                 <Users

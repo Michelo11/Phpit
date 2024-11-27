@@ -18,7 +18,6 @@ export default function ResetPassword({
         password: "",
         password_confirmation: "",
     });
-
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
 

@@ -33,4 +33,7 @@ Route::resource('posts', PostController::class)
     ->only(['index', 'store', 'update', 'destroy'])
     ->middleware(['auth', 'verified']);
 
+Route::post('/posts/{id}/toggleLike', [PostController::class, 'toggleLike'])->name('posts.toggleLike')->middleware(['auth', 'verified']);
+Route::get('/posts/{id}/likes', [PostController::class, 'view'])->name('posts.view')->middleware(['auth', 'verified']);
+
 require __DIR__.'/auth.php';

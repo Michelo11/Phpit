@@ -12,7 +12,6 @@ export default function Register() {
         password: "",
         password_confirmation: "",
     });
-
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
 

@@ -12,7 +12,6 @@ export default function UpdatePasswordForm({
 }) {
     const passwordInput = useRef<HTMLInputElement>(null);
     const currentPasswordInput = useRef<HTMLInputElement>(null);
-
     const {
         data,
         setData,
@@ -26,7 +25,6 @@ export default function UpdatePasswordForm({
         password: "",
         password_confirmation: "",
     });
-
     const updatePassword: FormEventHandler = (e) => {
         e.preventDefault();
 

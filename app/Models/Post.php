@@ -4,9 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Overtrue\LaravelLike\Traits\Likeable;
 
 class Post extends Model
 {
+    use Likeable;
+
     protected $table = 'posts';
     protected $primaryKey = 'id';
 

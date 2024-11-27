@@ -18,7 +18,6 @@ export default function Login({
         password: "",
         remember: false,
     });
-
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
 

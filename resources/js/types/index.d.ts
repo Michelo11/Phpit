@@ -13,6 +13,8 @@ export interface Post {
     created_at: string;
     updated_at: string;
     image: string;
+    has_liked: boolean;
+    likers?: User[];
 }
 
 export interface Followable {

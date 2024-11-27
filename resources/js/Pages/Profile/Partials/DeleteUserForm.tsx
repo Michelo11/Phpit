@@ -12,7 +12,6 @@ export default function DeleteUserForm({
 }) {
     const [confirmingUserDeletion, setConfirmingUserDeletion] = useState(false);
     const passwordInput = useRef<HTMLInputElement>(null);
-
     const {
         data,
         setData,
@@ -24,11 +23,9 @@ export default function DeleteUserForm({
     } = useForm({
         password: "",
     });
-
     const confirmUserDeletion = () => {
         setConfirmingUserDeletion(true);
     };
-
     const deleteUser: FormEventHandler = (e) => {
         e.preventDefault();
 
@@ -39,7 +36,6 @@ export default function DeleteUserForm({
             onFinish: () => reset(),
         });
     };
-
     const closeModal = () => {
         setConfirmingUserDeletion(false);
 

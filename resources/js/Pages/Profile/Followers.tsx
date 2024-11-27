@@ -13,8 +13,8 @@ export default function Followers({
     const { auth } = usePage().props;
 
     return (
-        <AuthenticatedLayout header={<h2>{auth.user.name}'s Followers</h2>}>
-            <Head title={`${auth.user.name}'s Followers`} />
+        <AuthenticatedLayout header={<h2>{auth.user.name}'s followers</h2>}>
+            <Head title={`${auth.user.name}'s followers`} />
 
             <div className="mx-auto max-w-7xl sm:px-6 lg:px-8 flex flex-col gap-4">
                 <Users

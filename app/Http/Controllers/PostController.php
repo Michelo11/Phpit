@@ -18,11 +18,12 @@ class PostController extends Controller
      */
     public function index(Request $request): Response
     {
-        $posts = Post::with('user:id,name,avatar')->latest()->get();
+        $posts = Post::with('user:id,name,avatar')->latest()->with('likers')->get();
         $posts = $posts->sortBy(function ($post) use ($request) {
             return $request->user()->followers->contains($post->user);
         }, SORT_REGULAR, true);
         $posts = $posts->values()->all();
+        $posts = $request->user()->attachLikeStatus($posts);
 
         return Inertia::render('Dashboard/Index', [
             'posts' => $posts,
@@ -92,5 +93,28 @@ class PostController extends Controller
         $post->delete();
 
         return redirect()->back();
+    }
+
+    /**
+     * Like or unlike the specified resource.
+     */
+    public function toggleLike(Request $request, string $postId): RedirectResponse
+    {
+        $post = Post::findOrFail($postId);
+
+        $request->user()->toggleLike($post);
+
+        return redirect()->back();
+    }
+
+    public function view(Request $request, string $postId): Response
+    {
+        $post = Post::with('user:id,name,avatar')->with('likers')->findOrFail($postId);
+        $post = $request->user()->attachLikeStatus($post);
+        
+        return Inertia::render('Dashboard/Likes', [
+            'post' => $post,
+            'userFollowings' => $request->user()->followings()->with('followable')->get(),
+        ]);
     }
 }
