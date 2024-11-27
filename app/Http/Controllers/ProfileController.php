@@ -85,12 +85,12 @@ class ProfileController extends Controller
     public function view(Request $request, string $userId): Response
     {
         $user = User::findOrFail($userId);
-        
+
         return Inertia::render('Profile/Index', [
             'user' => $user,
-            'followers' => $request->user()->followers()->get(),
+            'userFollowings' => $request->user()->followings()->with('followable')->get(),
             'countFollowers' => $user->followers()->count(),
-            'countFollowing' => $user->followings()->count(),
+            'countFollowings' => $user->followings()->count(),
             'posts' => Post::with('user:id,name,avatar')->where('user_id', $user->id)->latest()->get(),
         ]);
     }
@@ -102,8 +102,36 @@ class ProfileController extends Controller
     {
         $user = User::findOrFail($userId);
 
-        $user->toggleFollow($request->user());
+        $request->user()->toggleFollow($user);
 
         return Redirect::back();
+    }
+
+    /**
+     * Display the user's followers.
+     */
+    public function followers(Request $request, string $userId): Response
+    {
+        $user = User::findOrFail($userId);
+
+        return Inertia::render('Profile/Followers', [
+            'user' => $user,
+            'userFollowings' => $request->user()->followings()->with('followable')->get(),
+            'followers' => $user->followers()->get(),
+        ]);
+    }
+
+    /**
+     * Display the user's followings.
+     */
+    public function followings(Request $request, string $userId): Response
+    {
+        $user = User::findOrFail($userId);
+
+        return Inertia::render('Profile/Followings', [
+            'user' => $user,
+            'followings' => $user->followings()->with('followable')->get(),
+            'userFollowings' => $request->user()->followings()->with('followable')->get(),
+        ]);
     }
 }

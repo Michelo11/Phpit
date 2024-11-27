@@ -1,4 +1,3 @@
-import { Post } from "@/types";
 import { useForm, usePage } from "@inertiajs/react";
 import { FormEventHandler } from "react";
 import { Button } from "./Ui/Button";
@@ -28,7 +27,7 @@ export default function FollowButton({
 
     if (auth.user.id !== userId) {
         return (
-            <form onSubmit={toggleFollow}>
+            <form onSubmit={toggleFollow} className={className}>
                 <Button
                     className="w-32"
                     disabled={processing}

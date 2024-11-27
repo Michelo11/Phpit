@@ -1,19 +1,18 @@
 import PostComponent from "@/Components/Post";
-import { Post } from "@/types";
-import { User } from "@/types/index";
+import { User, Post } from "@/types/index";
 
 export default function PostsList({
     className = "",
     posts,
     title,
     description,
-    followers,
+    userFollowings,
 }: {
     className?: string;
     posts: (Post & { user: { name: string; id: number; avatar: string } })[];
     title: string;
     description: string;
-    followers: User[];
+    userFollowings: User[];
 }) {
     return (
         <section className={className}>
@@ -28,9 +27,10 @@ export default function PostsList({
 
                 {posts.map((post) => (
                     <PostComponent
+                        className="border border-card p-4 sm:rounded-xl"
                         postItem={post}
                         key={post.id}
-                        following={followers.some(
+                        following={userFollowings.some(
                             (follower) => follower.id === post.user.id
                         )}
                     />

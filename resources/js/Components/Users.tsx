@@ -2,27 +2,33 @@ import FollowButton from "@/Components/FollowButton";
 import { User } from "@/types/index";
 import { Link } from "@inertiajs/react";
 
-export default function RecentUsers({
+export default function Users({
     className = "",
-    recentUsers,
-    followers,
+    users,
+    userFollowings,
+    title,
+    description,
 }: {
     className?: string;
-    recentUsers: User[];
-    followers: User[];
+    users: User[];
+    userFollowings: User[];
+    title: string;
+    description: string;
 }) {
     return (
         <section className={`space-y-6 ${className}`}>
             <header>
-                <h3>Recent Users</h3>
+                <h3>{title}</h3>
 
-                <p className="mt-1 muted">
-                    Users who recently joined the platform.
-                </p>
+                <p className="mt-1 muted">{description}</p>
             </header>
 
             <div className="flex flex-col gap-4">
-                {recentUsers.map((user) => (
+                {users.length === 0 && (
+                    <p className="muted">No users to show.</p>
+                )}
+                
+                {users.map((user) => (
                     <div
                         key={user.id}
                         className="flex items-center justify-between"
@@ -42,7 +48,7 @@ export default function RecentUsers({
 
                         <FollowButton
                             userId={user.id}
-                            following={followers.some(
+                            following={userFollowings.some(
                                 (follower) => follower.id === user.id
                             )}
                         />

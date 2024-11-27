@@ -1,8 +1,8 @@
-import { Post } from "@/types";
-import { Link, useForm, usePage } from "@inertiajs/react";
+import { Post } from "@/types/index";
+import { Link, usePage } from "@inertiajs/react";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
-import { FormEventHandler, useState } from "react";
+import { useState } from "react";
 import { FaArrowDown } from "react-icons/fa";
 import { Button } from "@/Components/Ui/Button";
 import {
@@ -104,7 +104,7 @@ export default function PostComponent({
 
             {postItem.image && (
                 <img
-                    src={`storage/${postItem.image}`}
+                    src={`/storage/${postItem.image}`}
                     alt={postItem.title}
                     className="w-1/3 mt-6"
                     draggable={false}

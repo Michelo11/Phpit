@@ -1,15 +1,19 @@
+import { Link } from "@inertiajs/react";
+
 export default function ShowInfo({
     className = "",
     title,
     description,
     countFollowers,
-    countFollowing,
+    countFollowings,
+    userId,
 }: {
     className?: string;
     title: string;
     description: string;
     countFollowers: number;
-    countFollowing: number;
+    countFollowings: number;
+    userId: number;
 }) {
     return (
         <section className={`space-y-6 ${className}`}>
@@ -20,8 +24,18 @@ export default function ShowInfo({
             </header>
 
             <div className="flex gap-4">
-                <p>Followers: {countFollowers || 0}</p>
-                <p>Following: {countFollowing || 0}</p>
+                <Link
+                    href={`/profile/${userId}/followers`}
+                    className="hover:underline"
+                >
+                    Followers: {countFollowers || 0}
+                </Link>
+                <Link
+                    href={`/profile/${userId}/followings`}
+                    className="hover:underline"
+                >
+                    Followings: {countFollowings || 0}
+                </Link>
             </div>
         </section>
     );

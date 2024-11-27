@@ -1,18 +1,17 @@
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import { Post } from "@/types";
-import { User } from "@/types/index";
+import { User, Post, Followable } from "@/types/index";
 import { Head } from "@inertiajs/react";
 import ManagePost from "../../Components/ManagePost";
 import PostsList from "../../Components/PostsList";
-import RecentUsers from "./Parcels/RecentUsers";
+import Users from "../../Components/Users";
 
 export default function Index({
     posts,
-    followers,
+    userFollowings,
     recentUsers,
 }: {
     posts: (Post & { user: { name: string; id: number; avatar: string } })[];
-    followers: User[];
+    userFollowings: Followable[];
     recentUsers: User[];
 }) {
     return (
@@ -32,14 +31,18 @@ export default function Index({
                         className="border border-card p-4 sm:rounded-xl"
                         title="Recent Posts"
                         description="Here are some of the latest posts from your friends."
-                        followers={followers}
+                        userFollowings={userFollowings.map(
+                            (user) => user.followable
+                        )}
                     />
                 </div>
 
-                <RecentUsers
-                    recentUsers={recentUsers}
-                    followers={followers}
+                <Users
+                    users={recentUsers}
+                    userFollowings={userFollowings.map((user) => user.followable)}
                     className="border border-card p-4 sm:rounded-xl lg:w-1/3 w-full max-h-96"
+                    title="Recent Users"
+                    description="Users who recently joined the platform."
                 />
             </div>
         </AuthenticatedLayout>

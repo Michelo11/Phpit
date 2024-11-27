@@ -26,8 +26,9 @@ class PostController extends Controller
 
         return Inertia::render('Dashboard/Index', [
             'posts' => $posts,
-            'recentUsers' => User::latest()->limit(5)->get(),
-            'followers' => $request->user()->followers()->get(),
+            'recentUsers' => User::where('id', '!=', $request->user()->id)->whereNotIn('id', $request->user()->followings()
+                ->pluck('followable_id'))->latest()->limit(5)->get(),
+            'userFollowings' => $request->user()->followings()->with('followable')->get(),
         ]);
     }
 
