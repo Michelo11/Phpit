@@ -12,7 +12,7 @@ import { Post, User } from "@/types/index";
 import { Link, router, useForm, usePage } from "@inertiajs/react";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
-import { ArrowDown, Heart, HeartOff } from "lucide-react";
+import { ArrowDown, Heart, HeartOff, MessageCircle } from "lucide-react";
 import { FormEventHandler, useState } from "react";
 import FollowButton from "./FollowButton";
 import { useLongPress } from "use-long-press";
@@ -22,6 +22,8 @@ import {
     TooltipProvider,
     TooltipTrigger,
 } from "./Ui/Tooltip";
+import { Textarea } from "./Ui/Textarea";
+import InputError from "./InputError";
 
 dayjs.extend(relativeTime);
 
@@ -36,7 +38,9 @@ export default function PostComponent({
 }) {
     const { auth } = usePage().props;
     const [editing, setEditing] = useState(false);
-    const { post, reset, processing } = useForm({});
+    const { data, setData, post, reset, processing, errors } = useForm({
+        content: "",
+    });
     const toggleLike: FormEventHandler = (e) => {
         e.preventDefault();
 
@@ -47,8 +51,18 @@ export default function PostComponent({
             },
         });
     };
+    const storeComment: FormEventHandler = (e) => {
+        e.preventDefault();
+
+        post(route("posts.storeComment", postItem.id), {
+            preserveScroll: true,
+            onSuccess: () => {
+                reset();
+            },
+        });
+    };
     const bind = useLongPress(() => {
-        router.visit(route("posts.view", postItem.id));
+        router.visit(route("posts.viewLikes", postItem.id));
     });
     const formatNumber = (number: number) => {
         if (number >= 1_000_000_000) {
@@ -73,7 +87,7 @@ export default function PostComponent({
                             {dayjs(postItem.created_at).fromNow()} by{" "}
                             <Link
                                 className="flex gap-1 items-center hover:underline"
-                                href={`/profile/${postItem.user.id}`}
+                                href={route("profile.view", postItem.user.id)}
                             >
                                 <img
                                     src={postItem.user.avatar}
@@ -144,42 +158,73 @@ export default function PostComponent({
             )}
 
             {postItem.user.id !== auth.user.id && (
-                <form onSubmit={toggleLike} className="mt-6">
-                    <TooltipProvider>
-                        <Tooltip>
-                            <TooltipTrigger asChild>
-                                <button
-                                    type="submit"
-                                    disabled={processing}
-                                    {...bind()}
-                                >
-                                    {postItem.has_liked ? (
-                                        <div className="flex flex-col items-center gap-1">
-                                            <HeartOff />
-                                            {postItem.likers?.length
-                                                ? formatNumber(
-                                                      postItem.likers.length
-                                                  )
-                                                : 0}
-                                        </div>
-                                    ) : (
-                                        <div className="flex flex-col items-center gap-1">
-                                            <Heart />
-                                            {postItem.likers?.length
-                                                ? formatNumber(
-                                                      postItem.likers.length
-                                                  )
-                                                : 0}
-                                        </div>
-                                    )}
-                                </button>
-                            </TooltipTrigger>
-                            <TooltipContent>
-                                <p>Long press to view likes</p>
-                            </TooltipContent>
-                        </Tooltip>
-                    </TooltipProvider>
-                </form>
+                <div className="flex flex-col gap-6 mt-6">
+                    <div className="flex items-center gap-3">
+                        <form onSubmit={toggleLike}>
+                            <TooltipProvider>
+                                <Tooltip>
+                                    <TooltipTrigger asChild>
+                                        <button
+                                            type="submit"
+                                            disabled={processing}
+                                            {...bind()}
+                                        >
+                                            {postItem.has_liked ? (
+                                                <div className="flex flex-col items-center gap-1">
+                                                    <HeartOff />
+                                                    {postItem.likers?.length
+                                                        ? formatNumber(
+                                                              postItem.likers
+                                                                  .length
+                                                          )
+                                                        : 0}
+                                                </div>
+                                            ) : (
+                                                <div className="flex flex-col items-center gap-1">
+                                                    <Heart />
+                                                    {postItem.likers?.length
+                                                        ? formatNumber(
+                                                              postItem.likers
+                                                                  .length
+                                                          )
+                                                        : 0}
+                                                </div>
+                                            )}
+                                        </button>
+                                    </TooltipTrigger>
+                                    <TooltipContent>
+                                        <p>Long press to view likes</p>
+                                    </TooltipContent>
+                                </Tooltip>
+                            </TooltipProvider>
+                        </form>
+
+                        <Link
+                            href={route("posts.viewComments", postItem.id)}
+                            className="flex flex-col items-center gap-1"
+                        >
+                            <MessageCircle />
+                            {postItem.comments?.length || 0}
+                        </Link>
+                    </div>
+
+                    <form onSubmit={storeComment}>
+                        <Textarea
+                            placeholder="Comment"
+                            id="content"
+                            name="content"
+                            className="mt-1 block w-full"
+                            value={data.content}
+                            onChange={(e) => setData("content", e.target.value)}
+                        />
+
+                        <InputError message={errors.content} className="mt-2" />
+
+                        <Button className="mt-4" disabled={processing}>
+                            Save
+                        </Button>
+                    </form>
+                </div>
             )}
 
             {editing && (

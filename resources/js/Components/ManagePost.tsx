@@ -2,7 +2,7 @@ import InputError from "@/Components/InputError";
 import { Button } from "@/Components/Ui/Button";
 import { Input } from "@/Components/Ui/Input";
 import { Textarea } from "@/Components/Ui/Textarea";
-import { Post } from "@/types/index";
+import { Post, User } from "@/types/index";
 import { Transition } from "@headlessui/react";
 import { router, useForm } from "@inertiajs/react";
 import { FormEventHandler, useRef, useState } from "react";
@@ -17,7 +17,7 @@ export default function ManagePost({
 }: {
     className?: string;
     title: string;
-    postItem?: Post & { user: { name: string; id: number } };
+    postItem?: Post & { user: User };
     description: string;
     action: "create" | "update";
     setEditing?: (editing: boolean) => void;

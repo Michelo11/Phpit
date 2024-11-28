@@ -2,13 +2,14 @@
 
 namespace App\Models;
 
+use BeyondCode\Comments\Traits\HasComments;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Overtrue\LaravelLike\Traits\Likeable;
 
 class Post extends Model
 {
-    use Likeable;
+    use Likeable, HasComments;
 
     protected $table = 'posts';
     protected $primaryKey = 'id';

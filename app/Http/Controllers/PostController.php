@@ -4,10 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Models\Post;
 use App\Models\User;
+use BeyondCode\Comments\Comment;
 use Illuminate\Http\RedirectResponse;
 use Inertia\Inertia;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Response;
 
@@ -18,21 +20,24 @@ class PostController extends Controller
      */
     public function index(Request $request): Response
     {
-        // add also a count of likers
-        $posts = Post::with('user:id,name,avatar')->with('likers')->latest()->get();
+        $posts = Post::with(['user:id,name,avatar', 'likers', 'comments'])->latest()->get();
         $posts = $posts->sortBy(function ($post) use ($request) {
             return $request->user()->followers->contains($post->user);
         }, SORT_REGULAR, true);
-        $posts = $posts->values()->all();
-        $posts = $request->user()->attachLikeStatus($posts);
+        $recentUsers = User::where('id', '!=', $request->user()->id)
+            ->whereNotIn('id', $request->user()->followings()->pluck('followable_id'))
+            ->latest()
+            ->limit(5)
+            ->get();
+        $userFollowings = $request->user()->followings()->with('followable')->get();
 
         return Inertia::render('Dashboard/Index', [
-            'posts' => $posts,
-            'recentUsers' => User::where('id', '!=', $request->user()->id)->whereNotIn('id', $request->user()->followings()
-                ->pluck('followable_id'))->latest()->limit(5)->get(),
-            'userFollowings' => $request->user()->followings()->with('followable')->get(),
+            'posts' => $posts->values()->all(),
+            'recentUsers' => $recentUsers,
+            'userFollowings' => $userFollowings,
         ]);
     }
+
 
     /**
      * Store a newly created resource in storage.
@@ -108,7 +113,10 @@ class PostController extends Controller
         return redirect()->back();
     }
 
-    public function view(Request $request, string $postId): Response
+    /**
+     * Display likes of the specified resource.
+     */
+    public function viewLikes(Request $request, string $postId): Response
     {
         $post = Post::with('user:id,name,avatar')->with('likers')->findOrFail($postId);
         $post = $request->user()->attachLikeStatus($post);
@@ -116,6 +124,50 @@ class PostController extends Controller
         return Inertia::render('Dashboard/Likes', [
             'post' => $post,
             'userFollowings' => $request->user()->followings()->with('followable')->get(),
+        ]);
+    }
+
+    /**
+     * Store a newly created comment in storage.
+     */
+    public function storeComment(Request $request, string $postId): RedirectResponse
+    {
+        $validated = $request->validate([
+            'content' => 'required|string|max:255',
+        ]);
+
+        $post = Post::findOrFail($postId);
+
+        $post->comment($validated['content']);
+
+        return redirect()->back();
+    }
+
+    /**
+     * Display comments of the specified resource.
+     */
+    public function viewComments(Request $request, string $postId): Response
+    {
+        $post = Post::with('user:id,name,avatar')->with('comments')->findOrFail($postId);
+        $comments = $post->comments->map(function ($comment) {
+            return [
+                'id' => $comment->id,
+                'comment' => $comment->comment,
+                'created_at' => $comment->created_at,
+                'updated_at' => $comment->updated_at,
+                'user_id' => $comment->user_id,
+            ];
+        });
+        $comments = $comments->map(function ($comment) {
+            $comment['user'] = User::find($comment['user_id']);
+            return $comment;
+        });
+        $userFollowings = $request->user()->followings()->with('followable')->get();
+
+        return Inertia::render('Dashboard/Comments', [
+            'post' => $post,
+            'comments' => $comments,
+            'userFollowings' => $userFollowings,
         ]);
     }
 }

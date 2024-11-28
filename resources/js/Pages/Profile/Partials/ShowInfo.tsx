@@ -25,13 +25,13 @@ export default function ShowInfo({
 
             <div className="flex gap-4">
                 <Link
-                    href={`/profile/${userId}/followers`}
+                    href={route("profile.followers", userId)}
                     className="hover:underline"
                 >
                     Followers: {countFollowers || 0}
                 </Link>
                 <Link
-                    href={`/profile/${userId}/followings`}
+                    href={route("profile.followings", userId)}
                     className="hover:underline"
                 >
                     Followings: {countFollowings || 0}

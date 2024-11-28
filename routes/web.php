@@ -27,7 +27,9 @@ Route::resource('posts', PostController::class)
     ->only(['index', 'store', 'update', 'destroy'])
     ->middleware(['auth', 'verified']);
 
+Route::get('/posts/{id}/likes', [PostController::class, 'viewLikes'])->name('posts.viewLikes')->middleware(['auth', 'verified']);
 Route::post('/posts/{id}/toggleLike', [PostController::class, 'toggleLike'])->name('posts.toggleLike')->middleware(['auth', 'verified']);
-Route::get('/posts/{id}/likes', [PostController::class, 'view'])->name('posts.view')->middleware(['auth', 'verified']);
+Route::get('/posts/{id}/comments', [PostController::class, 'viewComments'])->name('posts.viewComments')->middleware(['auth', 'verified']);
+Route::post('/posts/{id}/comments', [PostController::class, 'storeComment'])->name('posts.storeComment')->middleware(['auth', 'verified']);
 
 require __DIR__.'/auth.php';

@@ -27,7 +27,7 @@ export default function Users({
                 {users.length === 0 && (
                     <p className="muted">No users to show.</p>
                 )}
-                
+
                 {users.map((user) => (
                     <div
                         key={user.id}
@@ -35,7 +35,7 @@ export default function Users({
                     >
                         <Link
                             className="flex items-center gap-4 hover:underline"
-                            href={`/profile/${user.id}`}
+                            href={route("profile.view", user.id)}
                         >
                             <img
                                 src={user.avatar}

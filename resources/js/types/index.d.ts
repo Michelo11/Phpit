@@ -15,6 +15,15 @@ export interface Post {
     image: string;
     has_liked: boolean;
     likers?: User[];
+    comments?: Comment[];
+}
+
+export interface Comment {
+    id: string;
+    comment: string;
+    created_at: string;
+    updated_at: string;
+    user: User;
 }
 
 export interface Followable {
