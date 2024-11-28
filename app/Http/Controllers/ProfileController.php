@@ -85,13 +85,15 @@ class ProfileController extends Controller
     public function view(Request $request, string $userId): Response
     {
         $user = User::findOrFail($userId);
+        $posts = Post::with('user:id,name,avatar')->where('user_id', $user->id)->with('likers')->latest()->get();
+        $posts = $request->user()->attachLikeStatus($posts);
 
         return Inertia::render('Profile/Index', [
             'user' => $user,
             'userFollowings' => $request->user()->followings()->with('followable')->get(),
             'countFollowers' => $user->followers()->count(),
             'countFollowings' => $user->followings()->count(),
-            'posts' => Post::with('user:id,name,avatar')->where('user_id', $user->id)->latest()->get(),
+            'posts' => $posts,
         ]);
     }
 

@@ -9,7 +9,7 @@ export default function PostsList({
     userFollowings,
 }: {
     className?: string;
-    posts: (Post & { user: { name: string; id: number; avatar: string } })[];
+    posts: (Post & { user: User })[];
     title: string;
     description: string;
     userFollowings: User[];

@@ -15,17 +15,11 @@ Route::get('/', function () {
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile/{id}', [ProfileController::class, 'view'])->name('profile.view');
-    
     Route::post('/profile/{id}', [ProfileController::class, 'toggleFollow'])->name('profile.toggleFollow');
-
     Route::get('/profile/{id}/followers', [ProfileController::class, 'followers'])->name('profile.followers');
-
     Route::get('/profile/{id}/followings', [ProfileController::class, 'followings'])->name('profile.followings');
-    
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 

@@ -43,6 +43,7 @@ export default function ManagePost({
             setCustomError("Please provide either content or an image.");
             return false;
         }
+
         setCustomError(null);
         return true;
     };
@@ -101,7 +102,6 @@ export default function ManagePost({
 
                     <InputError message={errors.title} className="mt-2" />
                 </div>
-
                 <div>
                     <Textarea
                         placeholder="Content"
@@ -114,7 +114,6 @@ export default function ManagePost({
 
                     <InputError message={errors.content} className="mt-2" />
                 </div>
-
                 <input
                     type="file"
                     name="image"
@@ -127,7 +126,6 @@ export default function ManagePost({
                     }}
                     hidden
                 />
-
                 <div className="flex items-center gap-4">
                     <div className="flex items-center gap-4">
                         <Button
@@ -170,6 +168,8 @@ export default function ManagePost({
                 {customError && (
                     <InputError message={customError} className="mt-2" />
                 )}
+
+                <InputError message={errors.image} className="mt-2" />
             </form>
         </section>
     );

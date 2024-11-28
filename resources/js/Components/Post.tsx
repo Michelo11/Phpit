@@ -8,14 +8,20 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/Components/Ui/Dropdown";
-import { Post } from "@/types/index";
-import { Link, useForm, usePage } from "@inertiajs/react";
+import { Post, User } from "@/types/index";
+import { Link, router, useForm, usePage } from "@inertiajs/react";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { ArrowDown, Heart, HeartOff } from "lucide-react";
 import { FormEventHandler, useState } from "react";
 import FollowButton from "./FollowButton";
 import { useLongPress } from "use-long-press";
+import {
+    Tooltip,
+    TooltipContent,
+    TooltipProvider,
+    TooltipTrigger,
+} from "./Ui/Tooltip";
 
 dayjs.extend(relativeTime);
 
@@ -24,7 +30,7 @@ export default function PostComponent({
     className = "",
     following,
 }: {
-    postItem: Post & { user: { name: string; id: number; avatar: string } };
+    postItem: Post & { user: User };
     className?: string;
     following?: boolean;
 }) {
@@ -42,8 +48,19 @@ export default function PostComponent({
         });
     };
     const bind = useLongPress(() => {
-        location.href = `/posts/${postItem.id}/likes`;
+        router.visit(route("posts.view", postItem.id));
     });
+    const formatNumber = (number: number) => {
+        if (number >= 1_000_000_000) {
+            return (number / 1_000_000_000).toFixed(1) + "B";
+        } else if (number >= 1_000_000) {
+            return (number / 1_000_000).toFixed(1) + "M";
+        } else if (number >= 1_000) {
+            return (number / 1_000).toFixed(1) + "K";
+        } else {
+            return number.toString();
+        }
+    };
 
     return (
         <section className={className}>
@@ -128,14 +145,40 @@ export default function PostComponent({
 
             {postItem.user.id !== auth.user.id && (
                 <form onSubmit={toggleLike} className="mt-6">
-                    <button
-                        className="w-32"
-                        type="submit"
-                        disabled={processing}
-                        {...bind()}
-                    >
-                        {postItem.has_liked ? <HeartOff /> : <Heart />}
-                    </button>
+                    <TooltipProvider>
+                        <Tooltip>
+                            <TooltipTrigger asChild>
+                                <button
+                                    type="submit"
+                                    disabled={processing}
+                                    {...bind()}
+                                >
+                                    {postItem.has_liked ? (
+                                        <div className="flex flex-col items-center gap-1">
+                                            <HeartOff />
+                                            {postItem.likers?.length
+                                                ? formatNumber(
+                                                      postItem.likers.length
+                                                  )
+                                                : 0}
+                                        </div>
+                                    ) : (
+                                        <div className="flex flex-col items-center gap-1">
+                                            <Heart />
+                                            {postItem.likers?.length
+                                                ? formatNumber(
+                                                      postItem.likers.length
+                                                  )
+                                                : 0}
+                                        </div>
+                                    )}
+                                </button>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                                <p>Long press to view likes</p>
+                            </TooltipContent>
+                        </Tooltip>
+                    </TooltipProvider>
                 </form>
             )}
 

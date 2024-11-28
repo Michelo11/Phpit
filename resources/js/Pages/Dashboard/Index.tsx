@@ -10,7 +10,7 @@ export default function Index({
     userFollowings,
     recentUsers,
 }: {
-    posts: (Post & { user: { name: string; id: number; avatar: string } })[];
+    posts: (Post & { user: User })[];
     userFollowings: Followable[];
     recentUsers: User[];
 }) {

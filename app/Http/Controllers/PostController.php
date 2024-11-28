@@ -18,7 +18,8 @@ class PostController extends Controller
      */
     public function index(Request $request): Response
     {
-        $posts = Post::with('user:id,name,avatar')->latest()->with('likers')->get();
+        // add also a count of likers
+        $posts = Post::with('user:id,name,avatar')->with('likers')->latest()->get();
         $posts = $posts->sortBy(function ($post) use ($request) {
             return $request->user()->followers->contains($post->user);
         }, SORT_REGULAR, true);
