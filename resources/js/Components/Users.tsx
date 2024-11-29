@@ -35,7 +35,7 @@ export default function Users({
                     >
                         <Link
                             className="flex items-center gap-4 hover:underline"
-                            href={route("profile.view", user.id)}
+                            href={route("profile.index", user.id)}
                         >
                             <img
                                 src={user.avatar}

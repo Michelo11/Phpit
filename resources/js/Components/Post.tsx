@@ -44,7 +44,7 @@ export default function PostComponent({
     const toggleLike: FormEventHandler = (e) => {
         e.preventDefault();
 
-        post(route("posts.toggleLike", postItem.id), {
+        post(route("likes.store", postItem.id), {
             preserveScroll: true,
             onSuccess: () => {
                 reset();
@@ -54,7 +54,7 @@ export default function PostComponent({
     const storeComment: FormEventHandler = (e) => {
         e.preventDefault();
 
-        post(route("posts.storeComment", postItem.id), {
+        post(route("comments.store", postItem.id), {
             preserveScroll: true,
             onSuccess: () => {
                 reset();
@@ -62,7 +62,7 @@ export default function PostComponent({
         });
     };
     const bind = useLongPress(() => {
-        router.visit(route("posts.viewLikes", postItem.id));
+        router.visit(route("likes.index", postItem.id));
     });
     const formatNumber = (number: number) => {
         if (number >= 1_000_000_000) {
@@ -87,7 +87,7 @@ export default function PostComponent({
                             {dayjs(postItem.created_at).fromNow()} by{" "}
                             <Link
                                 className="flex gap-1 items-center hover:underline"
-                                href={route("profile.view", postItem.user.id)}
+                                href={route("profile.index", postItem.user.id)}
                             >
                                 <img
                                     src={postItem.user.avatar}
@@ -200,7 +200,7 @@ export default function PostComponent({
                         </form>
 
                         <Link
-                            href={route("posts.viewComments", postItem.id)}
+                            href={route("comments.index", postItem.id)}
                             className="flex flex-col items-center gap-1"
                         >
                             <MessageCircle />

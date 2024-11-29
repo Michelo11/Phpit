@@ -4,12 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\Post;
 use App\Models\User;
-use BeyondCode\Comments\Comment;
 use Illuminate\Http\RedirectResponse;
 use Inertia\Inertia;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Response;
 
@@ -21,15 +19,23 @@ class PostController extends Controller
     public function index(Request $request): Response
     {
         $posts = Post::with(['user:id,name,avatar', 'likers', 'comments'])->latest()->get();
-        $posts = $posts->sortBy(function ($post) use ($request) {
-            return $request->user()->followers->contains($post->user);
-        }, SORT_REGULAR, true);
+        $userFollowings = $request->user()->followings()->with('followable')->get();
+        $posts = $posts->sort(function ($a, $b) use ($userFollowings) {
+            $aFollowed = $userFollowings->contains('followable_id', $a->user_id);
+            $bFollowed = $userFollowings->contains('followable_id', $b->user_id);
+            if ($aFollowed && !$bFollowed) {
+                return -1;
+            } elseif (!$aFollowed && $bFollowed) {
+                return 1;
+            } else {
+                return $b->created_at <=> $a->created_at;
+            }
+        });
         $recentUsers = User::where('id', '!=', $request->user()->id)
             ->whereNotIn('id', $request->user()->followings()->pluck('followable_id'))
             ->latest()
             ->limit(5)
             ->get();
-        $userFollowings = $request->user()->followings()->with('followable')->get();
 
         return Inertia::render('Dashboard/Index', [
             'posts' => $posts->values()->all(),
@@ -99,75 +105,5 @@ class PostController extends Controller
         $post->delete();
 
         return redirect()->back();
-    }
-
-    /**
-     * Like or unlike the specified resource.
-     */
-    public function toggleLike(Request $request, string $postId): RedirectResponse
-    {
-        $post = Post::findOrFail($postId);
-
-        $request->user()->toggleLike($post);
-
-        return redirect()->back();
-    }
-
-    /**
-     * Display likes of the specified resource.
-     */
-    public function viewLikes(Request $request, string $postId): Response
-    {
-        $post = Post::with('user:id,name,avatar')->with('likers')->findOrFail($postId);
-        $post = $request->user()->attachLikeStatus($post);
-        
-        return Inertia::render('Dashboard/Likes', [
-            'post' => $post,
-            'userFollowings' => $request->user()->followings()->with('followable')->get(),
-        ]);
-    }
-
-    /**
-     * Store a newly created comment in storage.
-     */
-    public function storeComment(Request $request, string $postId): RedirectResponse
-    {
-        $validated = $request->validate([
-            'content' => 'required|string|max:255',
-        ]);
-
-        $post = Post::findOrFail($postId);
-
-        $post->comment($validated['content']);
-
-        return redirect()->back();
-    }
-
-    /**
-     * Display comments of the specified resource.
-     */
-    public function viewComments(Request $request, string $postId): Response
-    {
-        $post = Post::with('user:id,name,avatar')->with('comments')->findOrFail($postId);
-        $comments = $post->comments->map(function ($comment) {
-            return [
-                'id' => $comment->id,
-                'comment' => $comment->comment,
-                'created_at' => $comment->created_at,
-                'updated_at' => $comment->updated_at,
-                'user_id' => $comment->user_id,
-            ];
-        });
-        $comments = $comments->map(function ($comment) {
-            $comment['user'] = User::find($comment['user_id']);
-            return $comment;
-        });
-        $userFollowings = $request->user()->followings()->with('followable')->get();
-
-        return Inertia::render('Dashboard/Comments', [
-            'post' => $post,
-            'comments' => $comments,
-            'userFollowings' => $userFollowings,
-        ]);
     }
 }

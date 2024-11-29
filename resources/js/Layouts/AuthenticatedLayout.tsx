@@ -23,7 +23,7 @@ export default function Authenticated({
                 <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                     <div className="flex h-16 justify-between items-center">
                         <div className="flex items-center gap-8">
-                            <Link href={route("/")}>
+                            <Link href="/">
                                 <img
                                     src="https://michelemanna.me/img/logo.png"
                                     alt="Logo"
@@ -40,9 +40,9 @@ export default function Authenticated({
                             </NavLink>
 
                             <NavLink
-                                href={route("profile.view", user.id)}
+                                href={route("profile.index", user.id)}
                                 active={
-                                    route().current("profile.view") &&
+                                    route().current("profile.index") &&
                                     route().params.id === user.id.toString()
                                 }
                             >

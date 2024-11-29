@@ -17,6 +17,24 @@ use Inertia\Response;
 class ProfileController extends Controller
 {
     /**
+     * Display the user's profile.
+     */
+    public function index(Request $request, string $userId): Response
+    {
+        $user = User::findOrFail($userId);
+        $posts = Post::with('user:id,name,avatar')->where('user_id', $user->id)->with('likers')->latest()->get();
+        $posts = $request->user()->attachLikeStatus($posts);
+
+        return Inertia::render('Profile/Index', [
+            'user' => $user,
+            'userFollowings' => $request->user()->followings()->with('followable')->get(),
+            'countFollowers' => $user->followers()->count(),
+            'countFollowings' => $user->followings()->count(),
+            'posts' => $posts,
+        ]);
+    }
+
+    /**
      * Display the user's profile form.
      */
     public function edit(Request $request): Response
@@ -77,63 +95,5 @@ class ProfileController extends Controller
         $request->session()->regenerateToken();
 
         return Redirect::to('/');
-    }
-
-    /**
-     * Display the user's profile.
-     */
-    public function view(Request $request, string $userId): Response
-    {
-        $user = User::findOrFail($userId);
-        $posts = Post::with('user:id,name,avatar')->where('user_id', $user->id)->with('likers')->latest()->get();
-        $posts = $request->user()->attachLikeStatus($posts);
-
-        return Inertia::render('Profile/Index', [
-            'user' => $user,
-            'userFollowings' => $request->user()->followings()->with('followable')->get(),
-            'countFollowers' => $user->followers()->count(),
-            'countFollowings' => $user->followings()->count(),
-            'posts' => $posts,
-        ]);
-    }
-
-    /**
-     * Follow or unfollow a user.
-     */
-    public function toggleFollow(Request $request, string $userId): RedirectResponse
-    {
-        $user = User::findOrFail($userId);
-
-        $request->user()->toggleFollow($user);
-
-        return Redirect::back();
-    }
-
-    /**
-     * Display the user's followers.
-     */
-    public function followers(Request $request, string $userId): Response
-    {
-        $user = User::findOrFail($userId);
-
-        return Inertia::render('Profile/Followers', [
-            'user' => $user,
-            'userFollowings' => $request->user()->followings()->with('followable')->get(),
-            'followers' => $user->followers()->get(),
-        ]);
-    }
-
-    /**
-     * Display the user's followings.
-     */
-    public function followings(Request $request, string $userId): Response
-    {
-        $user = User::findOrFail($userId);
-
-        return Inertia::render('Profile/Followings', [
-            'user' => $user,
-            'followings' => $user->followings()->with('followable')->get(),
-            'userFollowings' => $request->user()->followings()->with('followable')->get(),
-        ]);
     }
 }
