@@ -18,20 +18,17 @@ class CommentController extends Controller
     public function index(Request $request, string $postId)
     {
         $post = Post::with('user:id,name,avatar')->with('comments')->findOrFail($postId);
-        $comments = $post->comments->map(function ($comment) {
+        $comments = $post->comments->map(function ($comment) use ($post) {
             return [
                 'id' => $comment->id,
                 'comment' => $comment->comment,
                 'created_at' => $comment->created_at,
                 'updated_at' => $comment->updated_at,
                 'user_id' => $comment->user_id,
+                'user' => User::find($comment->user_id),
+                'post' => $post,
             ];
-        });
-        $comments = $comments->map(function ($comment) {
-            $comment['user'] = User::find($comment['user_id']);
-            return $comment;
-        });
-        $comments = $comments->sort(function ($a, $b) use ($request) {
+        })->sort(function ($a, $b) use ($request) {
             $aFollowed = $request->user()->followings->contains('followable_id', $a['user_id']);
             $bFollowed = $request->user()->followings->contains('followable_id', $b['user_id']);
             if ($aFollowed && !$bFollowed) {
@@ -41,7 +38,7 @@ class CommentController extends Controller
             } else {
                 return $b['created_at'] <=> $a['created_at'];
             }
-        });
+        });        
         $userFollowings = $request->user()->followings()->with('followable')->get();
 
         return Inertia::render('Dashboard/Comments', [
@@ -70,7 +67,7 @@ class CommentController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $postId, string $commentId): RedirectResponse
+    public function update(Request $request, string $commentId): RedirectResponse
     {
         $comment = Comment::findOrFail($commentId);
 
@@ -80,9 +77,9 @@ class CommentController extends Controller
             'content' => 'required|string|max:255',
         ]);
 
-        $post = Post::findOrFail($postId);
-
-        $post->updateComment($commentId, $validated['content']);
+        $comment->update([
+            'content' => $validated['content']
+        ]);
 
         return redirect()->back();
     }

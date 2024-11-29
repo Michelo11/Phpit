@@ -29,7 +29,7 @@ Route::resource('posts', PostController::class)
     ->middleware(['auth', 'verified']);
 
 Route::resource('posts/{id}/comments', CommentController::class)
-    ->only(['index', 'store'])
+    ->only(['index', 'store', 'update', 'destroy'])
     ->middleware(['auth', 'verified']);
 
 Route::resource('posts/{id}/likes', LikeController::class)

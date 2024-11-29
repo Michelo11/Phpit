@@ -23,7 +23,7 @@ export default function Index({
 
             <div className="mx-auto max-w-7xl sm:px-6 lg:px-8 flex flex-col gap-4">
                 <ShowInfo
-                    title={`${user.name}'s info`}
+                    title="User's info"
                     description="Here is some information about this user."
                     className="border border-card p-4 sm:rounded-xl"
                     countFollowers={countFollowers}
@@ -34,7 +34,7 @@ export default function Index({
                 <PostsList
                     posts={posts}
                     className="border border-card p-4 sm:rounded-xl"
-                    title={`${user.name}'s posts`}
+                    title="User's posts"
                     description="Here are some of the latest posts from this user."
                     userFollowings={userFollowings.map(
                         (user) => user.followable

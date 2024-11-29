@@ -22,8 +22,6 @@ import {
     TooltipProvider,
     TooltipTrigger,
 } from "./Ui/Tooltip";
-import { Textarea } from "./Ui/Textarea";
-import InputError from "./InputError";
 
 dayjs.extend(relativeTime);
 
@@ -38,23 +36,11 @@ export default function PostComponent({
 }) {
     const { auth } = usePage().props;
     const [editing, setEditing] = useState(false);
-    const { data, setData, post, reset, processing, errors } = useForm({
-        content: "",
-    });
+    const { post, reset, processing } = useForm({});
     const toggleLike: FormEventHandler = (e) => {
         e.preventDefault();
 
         post(route("likes.store", postItem.id), {
-            preserveScroll: true,
-            onSuccess: () => {
-                reset();
-            },
-        });
-    };
-    const storeComment: FormEventHandler = (e) => {
-        e.preventDefault();
-
-        post(route("comments.store", postItem.id), {
             preserveScroll: true,
             onSuccess: () => {
                 reset();
@@ -207,30 +193,13 @@ export default function PostComponent({
                             {postItem.comments?.length || 0}
                         </Link>
                     </div>
-
-                    <form onSubmit={storeComment}>
-                        <Textarea
-                            placeholder="Comment"
-                            id="content"
-                            name="content"
-                            className="mt-1 block w-full"
-                            value={data.content}
-                            onChange={(e) => setData("content", e.target.value)}
-                        />
-
-                        <InputError message={errors.content} className="mt-2" />
-
-                        <Button className="mt-4" disabled={processing}>
-                            Save
-                        </Button>
-                    </form>
                 </div>
             )}
 
             {editing && (
                 <ManagePost
-                    title="Edit postItem"
-                    description="Edit your postItem."
+                    title="Edit post"
+                    description="Edit your post."
                     className="mt-6"
                     postItem={postItem}
                     action="update"

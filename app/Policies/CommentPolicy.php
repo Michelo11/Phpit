@@ -4,6 +4,7 @@ namespace App\Policies;
 
 use App\Models\User;
 use BeyondCode\Comments\Comment;
+use Illuminate\Support\Facades\Log;
 
 class CommentPolicy
 {

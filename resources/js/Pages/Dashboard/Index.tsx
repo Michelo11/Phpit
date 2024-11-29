@@ -21,7 +21,7 @@ export default function Index({
             <div className="mx-auto max-w-7xl sm:px-6 lg:px-8 flex lg:flex-row flex-col gap-4">
                 <div className="flex flex-col gap-4 lg:w-2/3 w-full">
                     <ManagePost
-                        title="Create Post"
+                        title="Create post"
                         description="Create a new post."
                         action="create"
                         className="border border-card p-4 sm:rounded-xl"
@@ -29,7 +29,7 @@ export default function Index({
                     <PostsList
                         posts={posts}
                         className="border border-card p-4 sm:rounded-xl"
-                        title="Recent Posts"
+                        title="Recent posts"
                         description="Here are some of the latest posts from your friends."
                         userFollowings={userFollowings.map(
                             (user) => user.followable

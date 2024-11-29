@@ -1,10 +1,10 @@
-import Users from "@/Components/Users";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Followable, Comment, Post } from "@/types";
 import { Head } from "@inertiajs/react";
-import CommentsComponent from "./Partials/Comments";
+import ManageComment from "./Partials/ManageComment";
+import CommentsList from "./Partials/CommentsList";
 
-export default function Likes({
+export default function CommentComponent({
     post,
     comments,
     userFollowings,
@@ -17,15 +17,24 @@ export default function Likes({
         <AuthenticatedLayout header={<h2>{post.title}'s comments</h2>}>
             <Head title="Comments" />
 
-            <div className="mx-auto max-w-7xl sm:px-6 lg:px-8 flex lg:flex-row flex-col gap-4">
-                <div className="border border-card p-4 sm:rounded-xl w-full">
-                    <CommentsComponent
-                        comments={comments}
-                        userFollowings={userFollowings.map(
-                            (user) => user.followable
-                        )}
-                    />
-                </div>
+            <div className="mx-auto max-w-7xl sm:px-6 lg:px-8 flex flex-col gap-4">
+                <ManageComment
+                    action="create"
+                    title="Create comment"
+                    description="Create a new comment."
+                    postItem={post}
+                    className="border border-card p-4 sm:rounded-xl"
+                />
+                <CommentsList
+                    comments={comments}
+                    className="border border-card p-4 sm:rounded-xl"
+                    title="Recent comments"
+                    post={post}
+                    description="Here are some of the recent comments."
+                    userFollowings={userFollowings.map(
+                        (user) => user.followable
+                    )}
+                />
             </div>
         </AuthenticatedLayout>
     );
