@@ -4,7 +4,6 @@ namespace App\Policies;
 
 use App\Models\User;
 use BeyondCode\Comments\Comment;
-use Illuminate\Support\Facades\Log;
 
 class CommentPolicy
 {
@@ -21,7 +20,7 @@ class CommentPolicy
      */
     public function view(User $user, Comment $comment): bool
     {
-        return $comment->user()->is($user);
+        return $user->id === $comment->user_id;
     }
 
     /**
@@ -37,7 +36,7 @@ class CommentPolicy
      */
     public function update(User $user, Comment $comment): bool
     {
-        return $comment->user()->is($user);
+        return $user->id === $comment->user_id;
     }
 
     /**
@@ -45,7 +44,7 @@ class CommentPolicy
      */
     public function delete(User $user, Comment $comment): bool
     {
-        return $comment->user()->is($user);
+        return $user->id === $comment->user_id;
     }
 
     /**
@@ -53,7 +52,7 @@ class CommentPolicy
      */
     public function restore(User $user, Comment $comment): bool
     {
-        return $comment->user()->is($user);
+        return $user->id === $comment->user_id;
     }
 
     /**
@@ -61,6 +60,6 @@ class CommentPolicy
      */
     public function forceDelete(User $user, Comment $comment): bool
     {
-        return $comment->user()->is($user);
+        return $user->id === $comment->user_id;
     }
 }

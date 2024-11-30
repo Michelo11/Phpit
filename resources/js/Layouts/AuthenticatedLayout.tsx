@@ -68,7 +68,7 @@ export default function Authenticated({
                                 </DropdownMenuLabel>
                                 <DropdownMenuSeparator />
                                 <DropdownMenuItem asChild>
-                                    <Link href={route("profile.edit")}>
+                                    <Link href={route("profile.index", user.id)}>
                                         Profile
                                     </Link>
                                 </DropdownMenuItem>

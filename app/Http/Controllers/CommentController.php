@@ -67,7 +67,7 @@ class CommentController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $commentId): RedirectResponse
+    public function update(Request $request, string $postId, string $commentId): RedirectResponse
     {
         $comment = Comment::findOrFail($commentId);
 
@@ -78,7 +78,7 @@ class CommentController extends Controller
         ]);
 
         $comment->update([
-            'content' => $validated['content']
+            'comment' => $validated['content']
         ]);
 
         return redirect()->back();
@@ -93,9 +93,7 @@ class CommentController extends Controller
 
         Gate::authorize('delete', $comment);
 
-        $post = Post::findOrFail($postId);
-
-        $post->deleteComment($commentId);
+        $comment->delete();
 
         return redirect()->back();
     }

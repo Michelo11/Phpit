@@ -16,7 +16,7 @@ export default function FollowButton({
     const toggleFollow: FormEventHandler = (e) => {
         e.preventDefault();
 
-        post(route("likes.store", userId), {
+        post(route("followers.store", userId), {
             preserveScroll: true,
             onSuccess: () => {
                 reset();

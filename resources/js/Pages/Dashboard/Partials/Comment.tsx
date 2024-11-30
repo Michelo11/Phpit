@@ -81,7 +81,15 @@ export default function CommentComponent({
                                     </button>
                                 </DropdownMenuItem>
                                 <DropdownMenuItem asChild>
-                                    DELETE
+                                    <Link
+                                        href={route("comments.destroy", {
+                                            id: post.id,
+                                            comment: comment.id,
+                                        })}
+                                        method="delete"
+                                    >
+                                        Delete
+                                    </Link>
                                 </DropdownMenuItem>
                             </DropdownMenuContent>
                         </DropdownMenu>
