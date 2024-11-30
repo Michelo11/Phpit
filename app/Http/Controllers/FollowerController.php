@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Notifications\UserNotification;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -51,8 +52,18 @@ class FollowerController extends Controller
     public function store(Request $request, string $userId): RedirectResponse
     {
         $user = User::findOrFail($userId);
+        $currentUser = $request->user();
 
-        $request->user()->toggleFollow($user);
+        $alreadyFollowing = $currentUser->isFollowing($user);
+
+        $currentUser->toggleFollow($user);
+
+        if (!$alreadyFollowing) {
+            $user->notify(new UserNotification('new_follower', [
+                'follower_name' => $currentUser->name,
+                'follower_id' => $currentUser->id,
+            ]));
+        }
 
         return Redirect::back();
     }

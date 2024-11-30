@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Post;
+use App\Notifications\UserNotification;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -65,8 +66,18 @@ class LikeController extends Controller
     public function store(Request $request, string $postId): RedirectResponse
     {
         $post = Post::findOrFail($postId);
+        $user = $request->user();
 
-        $request->user()->toggleLike($post);
+        $alreadyLiked = $user->hasLiked($post);
+
+        $user->toggleLike($post);
+
+        if (!$alreadyLiked) {
+            $post->user->notify(new UserNotification('new_like', [
+                'user_name' => $user->name,
+                'post_id' => $post->id,
+            ]));
+        }
 
         return redirect()->back();
     }

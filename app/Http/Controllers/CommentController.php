@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Post;
 use App\Models\User;
+use App\Notifications\UserNotification;
 use BeyondCode\Comments\Comment;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -80,7 +81,14 @@ class CommentController extends Controller
 
         $post = Post::findOrFail($postId);
 
-        $post->comment($validated['content']);
+        $post->comment($validated['content'], $request->user());
+
+        if ($post->user->id !== $request->user()->id) {
+            $post->user->notify(new UserNotification('new_comment', [
+                'user_name' => $request->user()->name,
+                'post_id' => $post->id,
+            ]));
+        }
 
         return redirect()->route('comments.index', $postId);
     }

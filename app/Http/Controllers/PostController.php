@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Post;
 use App\Models\User;
+use App\Notifications\UserNotification;
 use Illuminate\Http\RedirectResponse;
 use Inertia\Inertia;
 use Illuminate\Http\Request;
@@ -82,9 +83,17 @@ class PostController extends Controller
             $validated['image'] = Storage::disk('public')->put('images', $request->file('image'));
         }
 
-        $request->user()->posts()->create($validated);
+        $post = $request->user()->posts()->create($validated);
 
-        return redirect()->route('posts.index');
+        $followers = $request->user()->followers;
+        foreach ($followers as $follower) {
+            $follower->notify(new UserNotification('new_post', [
+                'user_name' => $request->user()->name,
+                'post_id' => $post->id,
+            ]));
+        }
+
+        return redirect()->back();
     }
 
     /**
