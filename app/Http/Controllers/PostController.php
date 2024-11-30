@@ -7,6 +7,7 @@ use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Inertia\Inertia;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Response;
@@ -18,11 +19,16 @@ class PostController extends Controller
      */
     public function index(Request $request): Response
     {
-        $posts = Post::with(['user:id,name,avatar', 'likers', 'comments'])->latest()->get();
         $userFollowings = $request->user()->followings()->with('followable')->get();
-        $posts = $posts->sort(function ($a, $b) use ($userFollowings) {
+
+        $allPosts = Post::with(['user:id,name,avatar', 'likers', 'comments'])
+            ->latest()
+            ->get();
+
+        $sortedPosts = $allPosts->sort(function ($a, $b) use ($userFollowings) {
             $aFollowed = $userFollowings->contains('followable_id', $a->user_id);
             $bFollowed = $userFollowings->contains('followable_id', $b->user_id);
+            
             if ($aFollowed && !$bFollowed) {
                 return -1;
             } elseif (!$aFollowed && $bFollowed) {
@@ -31,6 +37,17 @@ class PostController extends Controller
                 return $b->created_at <=> $a->created_at;
             }
         });
+
+        $page = $request->input('page', 1);
+        $perPage = 5;
+        $paginatedPosts = new LengthAwarePaginator(
+            $sortedPosts->slice(($page - 1) * $perPage, $perPage),
+            $sortedPosts->count(),
+            $perPage,
+            $page,
+            ['path' => $request->url(), 'query' => $request->query()]
+        );
+
         $recentUsers = User::where('id', '!=', $request->user()->id)
             ->whereNotIn('id', $request->user()->followings()->pluck('followable_id'))
             ->latest()
@@ -38,12 +55,17 @@ class PostController extends Controller
             ->get();
 
         return Inertia::render('Dashboard/Index', [
-            'posts' => $posts->values()->all(),
+            'posts' => $paginatedPosts->values()->all(),
             'recentUsers' => $recentUsers,
             'userFollowings' => $userFollowings,
+            'paginationMeta' => [
+                'current_page' => $paginatedPosts->currentPage(),
+                'total' => $paginatedPosts->lastPage(),
+                'per_page' => $paginatedPosts->perPage(),
+                'total_items' => $paginatedPosts->total(),
+            ],
         ]);
     }
-
 
     /**
      * Store a newly created resource in storage.

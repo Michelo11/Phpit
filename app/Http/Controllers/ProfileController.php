@@ -8,6 +8,7 @@ use App\Models\User;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Storage;
@@ -22,15 +23,37 @@ class ProfileController extends Controller
     public function index(Request $request, string $userId): Response
     {
         $user = User::findOrFail($userId);
-        $posts = Post::with('user:id,name,avatar')->where('user_id', $user->id)->with('likers')->latest()->get();
-        $posts = $request->user()->attachLikeStatus($posts);
+
+        $postsQuery = Post::with('user:id,name,avatar')
+            ->where('user_id', $user->id)
+            ->with('likers')
+            ->latest()
+            ->get();
+
+        $postsQuery = $request->user()->attachLikeStatus($postsQuery);
+
+        $page = $request->input('page', 1);
+        $perPage = 5;
+        $paginatedPosts = new LengthAwarePaginator(
+            $postsQuery->slice(($page - 1) * $perPage, $perPage),
+            $postsQuery->count(),
+            $perPage,
+            $page,
+            ['path' => $request->url(), 'query' => $request->query()]
+        );
 
         return Inertia::render('Profile/Index', [
             'user' => $user,
             'userFollowings' => $request->user()->followings()->with('followable')->get(),
             'countFollowers' => $user->followers()->count(),
             'countFollowings' => $user->followings()->count(),
-            'posts' => $posts,
+            'posts' => $paginatedPosts->values()->all(),
+            'paginationMeta' => [
+                'current_page' => $paginatedPosts->currentPage(),
+                'total' => $paginatedPosts->lastPage(),
+                'per_page' => $paginatedPosts->perPage(),
+                'total_items' => $paginatedPosts->total(),
+            ],
         ]);
     }
 

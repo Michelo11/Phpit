@@ -86,6 +86,8 @@ export default function CommentComponent({
                                             id: post.id,
                                             comment: comment.id,
                                         })}
+                                        as="button"
+                                        className="w-full"
                                         method="delete"
                                     >
                                         Delete

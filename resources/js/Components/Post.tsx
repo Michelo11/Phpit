@@ -117,6 +117,8 @@ export default function PostComponent({
                                             postItem.id
                                         )}
                                         method="delete"
+                                        as="button"
+                                        className="w-full"
                                     >
                                         Delete
                                     </Link>

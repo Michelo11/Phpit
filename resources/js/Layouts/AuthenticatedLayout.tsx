@@ -16,9 +16,10 @@ export default function Authenticated({
     children,
 }: PropsWithChildren<{ header?: ReactNode }>) {
     const user = usePage().props.auth.user;
+    const currentYear = new Date().getFullYear();
 
     return (
-        <div className="min-h-screen bg-background">
+        <div className="min-h-screen bg-background flex flex-col">
             <nav className="border-b">
                 <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                     <div className="flex h-16 justify-between items-center">
@@ -68,12 +69,17 @@ export default function Authenticated({
                                 </DropdownMenuLabel>
                                 <DropdownMenuSeparator />
                                 <DropdownMenuItem asChild>
-                                    <Link href={route("profile.index", user.id)}>
+                                    <Link href={route("profile.edit")}>
                                         Profile
                                     </Link>
                                 </DropdownMenuItem>
                                 <DropdownMenuItem asChild>
-                                    <Link href={route("logout")} method="post">
+                                    <Link
+                                        href={route("logout")}
+                                        method="post"
+                                        as="button"
+                                        className="w-full"
+                                    >
                                         Log out
                                     </Link>
                                 </DropdownMenuItem>
@@ -92,6 +98,21 @@ export default function Authenticated({
             )}
 
             <main>{children}</main>
+
+            <footer className="mt-auto">
+                <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8 text-center">
+                    <p className="muted">
+                        &copy; {currentYear}{" "}
+                        <a
+                            href="https://michelemanna.me"
+                            className="hover:underline"
+                        >
+                            Michele Manna
+                        </a>
+                        . All rights reserved.
+                    </p>
+                </div>
+            </footer>
         </div>
     );
 }

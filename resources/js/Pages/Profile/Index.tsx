@@ -1,8 +1,19 @@
+import Pagination from "@/Components/Pagination";
 import PostsList from "@/Components/PostsList";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import { User, Post, Followable } from "@/types/index";
-import { Head } from "@inertiajs/react";
+import { Followable, PaginationMeta, Post, User } from "@/types/index";
+import { Head, router } from "@inertiajs/react";
+import { useState } from "react";
 import ShowInfo from "./Partials/ShowInfo";
+
+interface IndexProps {
+    posts: (Post & { user: User })[];
+    userFollowings: Followable[];
+    countFollowers: number;
+    countFollowings: number;
+    user: User;
+    paginationMeta: PaginationMeta;
+}
 
 export default function Index({
     posts,
@@ -10,13 +21,31 @@ export default function Index({
     countFollowers,
     countFollowings,
     user,
-}: {
-    userFollowings: Followable[];
-    countFollowers: number;
-    countFollowings: number;
-    posts: (Post & { user: User })[];
-    user: User;
-}) {
+    paginationMeta,
+}: IndexProps) {
+    const [currentPosts, setCurrentPosts] = useState(posts);
+    const [currentPaginationMeta, setCurrentPaginationMeta] =
+        useState(paginationMeta);
+
+    const handlePageChange = (page: number) => {
+        router.get(
+            route("profile.index", user.id),
+            { page },
+            {
+                preserveState: true,
+                preserveScroll: true,
+                onSuccess: (page) => {
+                    setCurrentPosts(
+                        page.props.posts as (Post & { user: User })[]
+                    );
+                    setCurrentPaginationMeta(
+                        page.props.paginationMeta as PaginationMeta
+                    );
+                },
+            }
+        );
+    };
+
     return (
         <AuthenticatedLayout header={<h2>Profile {user.name}</h2>}>
             <Head title={`Profile ${user.name}`} />
@@ -32,7 +61,7 @@ export default function Index({
                 />
 
                 <PostsList
-                    posts={posts}
+                    posts={currentPosts}
                     className="border border-card p-4 sm:rounded-xl"
                     title="User's posts"
                     description="Here are some of the latest posts from this user."
@@ -41,6 +70,15 @@ export default function Index({
                     )}
                 />
             </div>
+
+            {currentPaginationMeta.total > 1 && (
+                <div className="flex justify-center mt-6">
+                    <Pagination
+                        paginationMeta={currentPaginationMeta}
+                        onPageChange={handlePageChange}
+                    />
+                </div>
+            )}
         </AuthenticatedLayout>
     );
 }

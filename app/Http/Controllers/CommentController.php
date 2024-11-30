@@ -7,6 +7,7 @@ use App\Models\User;
 use BeyondCode\Comments\Comment;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
 
@@ -18,7 +19,10 @@ class CommentController extends Controller
     public function index(Request $request, string $postId)
     {
         $post = Post::with('user:id,name,avatar')->with('comments')->findOrFail($postId);
-        $comments = $post->comments->map(function ($comment) use ($post) {
+
+        $commentsQuery = $post->comments()->get();
+
+        $commentsQuery = $commentsQuery->map(function ($comment) use ($post) {
             return [
                 'id' => $comment->id,
                 'comment' => $comment->comment,
@@ -38,13 +42,30 @@ class CommentController extends Controller
             } else {
                 return $b['created_at'] <=> $a['created_at'];
             }
-        });        
+        });
+
+        $page = $request->input('page', 1);
+        $perPage = 5;
+        $paginatedComments = new LengthAwarePaginator(
+            $commentsQuery->slice(($page - 1) * $perPage, $perPage),
+            $commentsQuery->count(),
+            $perPage,
+            $page,
+            ['path' => $request->url(), 'query' => $request->query()]
+        );
+
         $userFollowings = $request->user()->followings()->with('followable')->get();
 
         return Inertia::render('Dashboard/Comments', [
             'post' => $post,
-            'comments' => $comments->values()->all(),
+            'comments' => $paginatedComments->values()->all(),
             'userFollowings' => $userFollowings,
+            'paginationMeta' => [
+                'current_page' => $paginatedComments->currentPage(),
+                'total' => $paginatedComments->lastPage(),
+                'per_page' => $paginatedComments->perPage(),
+                'total_items' => $paginatedComments->total(),
+            ],
         ]);
     }
 
@@ -61,7 +82,7 @@ class CommentController extends Controller
 
         $post->comment($validated['content']);
 
-        return redirect()->back();
+        return redirect()->route('comments.index', $postId);
     }
 
     /**

@@ -26,6 +26,13 @@ export interface Comment {
     user: User;
 }
 
+export interface PaginationMeta {
+    current_page: number;
+    total: number;
+    per_page: number;
+    total_items: number;
+}
+
 export interface Followable {
     followable: User;
 }

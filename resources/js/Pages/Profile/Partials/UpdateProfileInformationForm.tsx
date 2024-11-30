@@ -107,7 +107,7 @@ export default function UpdateProfileInformation({
                                 href={route("verification.send")}
                                 method="post"
                                 as="button"
-                                className="muted"
+                                className="muted w-full"
                             >
                                 Click here to re-send the verification email.
                             </Link>
