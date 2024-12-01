@@ -40,6 +40,7 @@ export default function Authenticated({
                             <NavLink
                                 href={route("posts.index")}
                                 active={route().current("posts.index")}
+                                className="hidden sm:block"
                             >
                                 Dashboard
                             </NavLink>
@@ -50,6 +51,7 @@ export default function Authenticated({
                                     route().current("profile.index") &&
                                     route().params.id === user.id.toString()
                                 }
+                                className="hidden sm:block"
                             >
                                 Profile
                             </NavLink>
@@ -57,6 +59,7 @@ export default function Authenticated({
                             <NavLink
                                 href={route("notifications.index")}
                                 active={route().current("notifications.index")}
+                                className="hidden sm:block"
                             >
                                 Notifications
                             </NavLink>
