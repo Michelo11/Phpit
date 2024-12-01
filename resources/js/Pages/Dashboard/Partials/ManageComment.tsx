@@ -40,6 +40,7 @@ export default function ManageComment({
         e.preventDefault();
 
         post(route("comments.store", postItem?.id), {
+            preserveState: false,
             preserveScroll: true,
             onSuccess: () => {
                 reset();
@@ -56,6 +57,7 @@ export default function ManageComment({
             }),
             {
                 ...data,
+                preserveState: false,
                 preserveScroll: true,
                 onSuccess: () => {
                     reset();

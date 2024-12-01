@@ -89,6 +89,7 @@ export default function CommentComponent({
                                         as="button"
                                         className="w-full"
                                         method="delete"
+                                        preserveState={false}
                                     >
                                         Delete
                                     </Link>

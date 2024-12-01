@@ -41,6 +41,7 @@ export default function PostComponent({
         e.preventDefault();
 
         post(route("likes.store", postItem.id), {
+            preserveState: false,
             preserveScroll: true,
             onSuccess: () => {
                 reset();
@@ -61,7 +62,7 @@ export default function PostComponent({
             return number.toString();
         }
     };
-
+    
     return (
         <section className={className}>
             <header className="flex items-center justify-between">
@@ -119,6 +120,7 @@ export default function PostComponent({
                                         method="delete"
                                         as="button"
                                         className="w-full"
+                                        preserveState={false}
                                     >
                                         Delete
                                     </Link>
@@ -145,58 +147,54 @@ export default function PostComponent({
                 />
             )}
 
-            {postItem.user.id !== auth.user.id && (
-                <div className="flex flex-col gap-6 mt-6">
-                    <div className="flex items-center gap-3">
-                        <form onSubmit={toggleLike}>
-                            <TooltipProvider>
-                                <Tooltip>
-                                    <TooltipTrigger asChild>
-                                        <button
-                                            type="submit"
-                                            disabled={processing}
-                                            {...bind()}
-                                        >
-                                            {postItem.has_liked ? (
-                                                <div className="flex flex-col items-center gap-1">
-                                                    <HeartOff />
-                                                    {postItem.likers?.length
-                                                        ? formatNumber(
-                                                              postItem.likers
-                                                                  .length
-                                                          )
-                                                        : 0}
-                                                </div>
-                                            ) : (
-                                                <div className="flex flex-col items-center gap-1">
-                                                    <Heart />
-                                                    {postItem.likers?.length
-                                                        ? formatNumber(
-                                                              postItem.likers
-                                                                  .length
-                                                          )
-                                                        : 0}
-                                                </div>
-                                            )}
-                                        </button>
-                                    </TooltipTrigger>
-                                    <TooltipContent>
-                                        <p>Long press to view likes</p>
-                                    </TooltipContent>
-                                </Tooltip>
-                            </TooltipProvider>
-                        </form>
+            <div className="flex flex-col gap-6 mt-6">
+                <div className="flex items-center gap-3">
+                    <form onSubmit={toggleLike}>
+                        <TooltipProvider>
+                            <Tooltip>
+                                <TooltipTrigger asChild>
+                                    <button
+                                        type="submit"
+                                        disabled={processing}
+                                        {...bind()}
+                                    >
+                                        {postItem.has_liked ? (
+                                            <div className="flex flex-col items-center gap-1">
+                                                <HeartOff />
+                                                {postItem.likers?.length
+                                                    ? formatNumber(
+                                                          postItem.likers.length
+                                                      )
+                                                    : 0}
+                                            </div>
+                                        ) : (
+                                            <div className="flex flex-col items-center gap-1">
+                                                <Heart />
+                                                {postItem.likers?.length
+                                                    ? formatNumber(
+                                                          postItem.likers.length
+                                                      )
+                                                    : 0}
+                                            </div>
+                                        )}
+                                    </button>
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                    <p>Long press to view likes</p>
+                                </TooltipContent>
+                            </Tooltip>
+                        </TooltipProvider>
+                    </form>
 
-                        <Link
-                            href={route("comments.index", postItem.id)}
-                            className="flex flex-col items-center gap-1"
-                        >
-                            <MessageCircle />
-                            {postItem.comments?.length || 0}
-                        </Link>
-                    </div>
+                    <Link
+                        href={route("comments.index", postItem.id)}
+                        className="flex flex-col items-center gap-1"
+                    >
+                        <MessageCircle />
+                        {postItem.comments?.length || 0}
+                    </Link>
                 </div>
-            )}
+            </div>
 
             {editing && (
                 <ManagePost

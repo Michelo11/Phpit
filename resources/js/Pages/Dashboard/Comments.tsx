@@ -28,7 +28,7 @@ export default function Comments({
             route("comments.index", { id: post.id }),
             { page },
             {
-                preserveState: true,
+                preserveState: false,
                 preserveScroll: true,
                 onSuccess: (page) => {
                     setCurrentComments(page.props.comments as Comment[]);

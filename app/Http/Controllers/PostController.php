@@ -25,6 +25,8 @@ class PostController extends Controller
         $allPosts = Post::with(['user:id,name,avatar', 'likers', 'comments'])
             ->latest()
             ->get();
+        
+        $allPosts = $request->user()->attachLikeStatus($allPosts);
 
         $sortedPosts = $allPosts->sort(function ($a, $b) use ($userFollowings) {
             $aFollowed = $userFollowings->contains('followable_id', $a->user_id);

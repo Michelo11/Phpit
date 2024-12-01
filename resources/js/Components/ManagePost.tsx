@@ -53,7 +53,10 @@ export default function ManagePost({
 
         post(route("posts.store"), {
             preserveScroll: true,
-            onSuccess: () => reset(),
+            preserveState: false,
+            onSuccess: () => {
+                reset();
+            },
         });
     };
     const updatePost: FormEventHandler = (e) => {
@@ -67,6 +70,7 @@ export default function ManagePost({
                 _method: "patch",
             },
             {
+                preserveState: false,
                 onSuccess: () => {
                     if (setEditing) setEditing(false);
                     reset();
