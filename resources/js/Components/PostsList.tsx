@@ -1,19 +1,21 @@
 import PostComponent from "@/Components/Post";
 import { User, Post } from "@/types/index";
 
+interface PostsListProps {
+    className?: string;
+    posts: (Post & { user: User })[];
+    title: string;
+    description: string;
+    userFollowings: User[];
+}
+
 export default function PostsList({
     className = "",
     posts,
     title,
     description,
     userFollowings,
-}: {
-    className?: string;
-    posts: (Post & { user: User })[];
-    title: string;
-    description: string;
-    userFollowings: User[];
-}) {
+}: PostsListProps) {
     return (
         <section className={className}>
             <header>

@@ -1,6 +1,15 @@
 import { Comment, Post, User } from "@/types/index";
 import CommentComponent from "./Comment";
 
+interface CommentsListProps {
+    className?: string;
+    comments: Comment[];
+    post: Post;
+    title: string;
+    description: string;
+    userFollowings: User[];
+}
+
 export default function CommentsList({
     className = "",
     comments,
@@ -8,14 +17,7 @@ export default function CommentsList({
     title,
     description,
     userFollowings,
-}: {
-    className?: string;
-    comments: Comment[];
-    post: Post;
-    title: string;
-    description: string;
-    userFollowings: User[];
-}) {
+}: CommentsListProps) {
     return (
         <section className={className}>
             <header>

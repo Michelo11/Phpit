@@ -2,15 +2,17 @@ import { useForm, usePage } from "@inertiajs/react";
 import { FormEventHandler } from "react";
 import { Button } from "./Ui/Button";
 
+interface FollowButtonProps {
+    className?: string;
+    userId: number;
+    following?: boolean;
+}
+
 export default function FollowButton({
     className = "",
     userId,
     following,
-}: {
-    className?: string;
-    userId: number;
-    following?: boolean;
-}) {
+}: FollowButtonProps) {
     const { auth } = usePage().props;
     const { post, reset, processing } = useForm({});
     const toggleFollow: FormEventHandler = (e) => {

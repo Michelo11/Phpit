@@ -2,19 +2,21 @@ import FollowButton from "@/Components/FollowButton";
 import { User } from "@/types/index";
 import { Link } from "@inertiajs/react";
 
+interface UsersProps {
+    className?: string;
+    users: User[];
+    userFollowings: User[];
+    title: string;
+    description: string;
+}
+
 export default function Users({
     className = "",
     users,
     userFollowings,
     title,
     description,
-}: {
-    className?: string;
-    users: User[];
-    userFollowings: User[];
-    title: string;
-    description: string;
-}) {
+}: UsersProps) {
     return (
         <section className={`space-y-6 ${className}`}>
             <header>

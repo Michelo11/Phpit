@@ -4,6 +4,7 @@ use App\Http\Controllers\CommentController;
 use App\Http\Controllers\FollowerController;
 use App\Http\Controllers\FollowingController;
 use App\Http\Controllers\LikeController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
@@ -42,6 +43,10 @@ Route::resource('profile/{id}/followers', FollowerController::class)
 
 Route::resource('profile/{id}/followings', FollowingController::class)
     ->only(['index'])
+    ->middleware(['auth', 'verified']);
+
+Route::resource('notifications', NotificationController::class)
+    ->only(['index', 'destroy'])
     ->middleware(['auth', 'verified']);
 
 require __DIR__.'/auth.php';

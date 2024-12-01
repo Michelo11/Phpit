@@ -25,15 +25,17 @@ import {
 
 dayjs.extend(relativeTime);
 
+interface PostComponentProps {
+    postItem: Post & { user: User };
+    className?: string;
+    following?: boolean;
+}
+
 export default function PostComponent({
     postItem,
     className = "",
     following,
-}: {
-    postItem: Post & { user: User };
-    className?: string;
-    following?: boolean;
-}) {
+}: PostComponentProps) {
     const { auth } = usePage().props;
     const [editing, setEditing] = useState(false);
     const { post, reset, processing } = useForm({});

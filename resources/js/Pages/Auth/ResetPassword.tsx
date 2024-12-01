@@ -5,13 +5,15 @@ import GuestLayout from "@/Layouts/GuestLayout";
 import { Head, useForm } from "@inertiajs/react";
 import { FormEventHandler } from "react";
 
+interface ResetPasswordProps {
+    token: string;
+    email: string;
+}
+
 export default function ResetPassword({
     token,
     email,
-}: {
-    token: string;
-    email: string;
-}) {
+}: ResetPasswordProps) {
     const { data, setData, post, processing, errors, reset } = useForm({
         token: token,
         email: email,

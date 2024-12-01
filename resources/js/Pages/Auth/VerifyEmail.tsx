@@ -3,7 +3,11 @@ import GuestLayout from "@/Layouts/GuestLayout";
 import { Head, Link, useForm } from "@inertiajs/react";
 import { FormEventHandler } from "react";
 
-export default function VerifyEmail({ status }: { status?: string }) {
+interface VerifyEmailProps {
+    status?: string;
+}
+
+export default function VerifyEmail({ status }: VerifyEmailProps) {
     const { post, processing } = useForm({});
     const submit: FormEventHandler = (e) => {
         e.preventDefault();

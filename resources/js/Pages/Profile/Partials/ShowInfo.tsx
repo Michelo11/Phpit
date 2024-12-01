@@ -1,5 +1,14 @@
 import { Link } from "@inertiajs/react";
 
+interface ShowInfoProps {
+    className?: string;
+    title: string;
+    description: string;
+    countFollowers: number;
+    countFollowings: number;
+    userId: number;
+}
+
 export default function ShowInfo({
     className = "",
     title,
@@ -7,14 +16,7 @@ export default function ShowInfo({
     countFollowers,
     countFollowings,
     userId,
-}: {
-    className?: string;
-    title: string;
-    description: string;
-    countFollowers: number;
-    countFollowings: number;
-    userId: number;
-}) {
+}: ShowInfoProps) {
     return (
         <section className={`space-y-6 ${className}`}>
             <header>

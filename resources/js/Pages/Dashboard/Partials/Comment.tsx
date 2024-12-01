@@ -18,17 +18,19 @@ import ManageComment from "./ManageComment";
 
 dayjs.extend(relativeTime);
 
+interface CommentComponentProps {
+    comment: Comment;
+    post: Post;
+    className?: string;
+    following?: boolean;
+}
+
 export default function CommentComponent({
     comment,
     post,
     className = "",
     following,
-}: {
-    comment: Comment;
-    post: Post;
-    className?: string;
-    following?: boolean;
-}) {
+}: CommentComponentProps) {
     const { auth } = usePage().props;
     const [editing, setEditing] = useState(false);
 

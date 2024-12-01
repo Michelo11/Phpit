@@ -7,6 +7,15 @@ import { Transition } from "@headlessui/react";
 import { router, useForm } from "@inertiajs/react";
 import { FormEventHandler, useRef, useState } from "react";
 
+interface ManagePostProps {
+    className?: string;
+    postItem?: Post & { user: User };
+    title: string;
+    description: string;
+    action: "create" | "update";
+    setEditing?: (editing: boolean) => void;
+}
+
 export default function ManagePost({
     className = "",
     postItem,
@@ -14,14 +23,7 @@ export default function ManagePost({
     description,
     action,
     setEditing,
-}: {
-    className?: string;
-    title: string;
-    postItem?: Post & { user: User };
-    description: string;
-    action: "create" | "update";
-    setEditing?: (editing: boolean) => void;
-}) {
+}: ManagePostProps) {
     const fileInputRef = useRef<HTMLInputElement | null>(null);
     const [customError, setCustomError] = useState<string | null>(null);
     const {

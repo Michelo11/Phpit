@@ -9,15 +9,17 @@ import {
     PaginationPrevious,
 } from "./Ui/Pagination";
 
+interface PaginationComponentProps {
+    className?: string;
+    paginationMeta: PaginationMeta;
+    onPageChange: (page: number) => void;
+}
+
 export default function PaginationComponent({
     className = "",
     paginationMeta,
     onPageChange,
-}: {
-    className?: string;
-    paginationMeta: PaginationMeta;
-    onPageChange: (page: number) => void;
-}) {
+}: PaginationComponentProps) {
     const handlePageChange = (page: number) => {
         if (page < 1 || page > paginationMeta.total) return;
         onPageChange(page);

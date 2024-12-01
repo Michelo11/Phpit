@@ -11,10 +11,14 @@ import {
 import { Link, usePage } from "@inertiajs/react";
 import { PropsWithChildren, ReactNode } from "react";
 
+interface AuthenticatedProps extends PropsWithChildren<{}> {
+    header?: ReactNode;
+}
+
 export default function Authenticated({
     header,
     children,
-}: PropsWithChildren<{ header?: ReactNode }>) {
+}: AuthenticatedProps) {
     const user = usePage().props.auth.user;
     const currentYear = new Date().getFullYear();
 
@@ -48,6 +52,13 @@ export default function Authenticated({
                                 }
                             >
                                 Profile
+                            </NavLink>
+
+                            <NavLink
+                                href={route("notifications.index")}
+                                active={route().current("notifications.index")}
+                            >
+                                Notifications
                             </NavLink>
                         </div>
 

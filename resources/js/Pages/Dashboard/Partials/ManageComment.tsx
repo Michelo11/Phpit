@@ -6,6 +6,16 @@ import { Transition } from "@headlessui/react";
 import { useForm } from "@inertiajs/react";
 import { FormEventHandler } from "react";
 
+interface ManageCommentProps {
+    className?: string;
+    comment?: Comment;
+    postItem: Post;
+    action: "create" | "update";
+    setEditing?: (editing: boolean) => void;
+    title: string;
+    description: string;
+}
+
 export default function ManageComment({
     className = "",
     comment,
@@ -14,15 +24,7 @@ export default function ManageComment({
     setEditing,
     title,
     description,
-}: {
-    className?: string;
-    title: string;
-    comment?: Comment;
-    postItem: Post;
-    description: string;
-    action: "create" | "update";
-    setEditing?: (editing: boolean) => void;
-}) {
+}: ManageCommentProps) {
     const {
         data,
         setData,

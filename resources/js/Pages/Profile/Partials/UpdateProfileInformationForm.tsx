@@ -5,15 +5,17 @@ import { Transition } from "@headlessui/react";
 import { Link, router, useForm, usePage } from "@inertiajs/react";
 import { FormEventHandler, useRef } from "react";
 
+interface UpdateProfileInformationProps {
+    mustVerifyEmail: boolean;
+    status?: string;
+    className?: string;
+}
+
 export default function UpdateProfileInformation({
     mustVerifyEmail,
     status,
     className = "",
-}: {
-    mustVerifyEmail: boolean;
-    status?: string;
-    className?: string;
-}) {
+}: UpdateProfileInformationProps) {
     const user = usePage().props.auth.user;
     const fileInputRef = useRef<HTMLInputElement | null>(null);
     const { data, setData, errors, processing, recentlySuccessful } = useForm({

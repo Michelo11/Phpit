@@ -23,7 +23,6 @@ export default function Index({
     const [currentPosts, setCurrentPosts] = useState(posts);
     const [currentPaginationMeta, setCurrentPaginationMeta] =
         useState(paginationMeta);
-
     const handlePageChange = (page: number) => {
         router.get(
             route("posts.index"),

@@ -5,11 +5,13 @@ import { Input } from "@/Components/Ui/Input";
 import { useForm } from "@inertiajs/react";
 import { FormEventHandler, useRef, useState } from "react";
 
+interface DeleteUserFormProps {
+    className?: string;
+}
+
 export default function DeleteUserForm({
     className = "",
-}: {
-    className?: string;
-}) {
+}: DeleteUserFormProps) {
     const [confirmingUserDeletion, setConfirmingUserDeletion] = useState(false);
     const passwordInput = useRef<HTMLInputElement>(null);
     const {

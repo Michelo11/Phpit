@@ -5,10 +5,15 @@ import UpdatePasswordForm from "./Partials/UpdatePasswordForm";
 import UpdateProfileInformationForm from "./Partials/UpdateProfileInformationForm";
 import { PageProps } from "@/types/index";
 
+interface EditProps extends PageProps {
+    mustVerifyEmail: boolean;
+    status?: string;
+}
+
 export default function Edit({
     mustVerifyEmail,
     status,
-}: PageProps<{ mustVerifyEmail: boolean; status?: string }>) {
+}: EditProps) {
     return (
         <AuthenticatedLayout header={<h2>Profile</h2>}>
             <Head title="Profile" />

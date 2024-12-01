@@ -5,11 +5,13 @@ import { Transition } from "@headlessui/react";
 import { useForm } from "@inertiajs/react";
 import { FormEventHandler, useRef } from "react";
 
+interface UpdatePasswordFormProps {
+    className?: string;
+}
+
 export default function UpdatePasswordForm({
     className = "",
-}: {
-    className?: string;
-}) {
+}: UpdatePasswordFormProps) {
     const passwordInput = useRef<HTMLInputElement>(null);
     const currentPasswordInput = useRef<HTMLInputElement>(null);
     const {

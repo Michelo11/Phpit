@@ -37,6 +37,15 @@ export interface Followable {
     followable: User;
 }
 
+export interface Notification {
+    id: string;
+    created_at: string;
+    updated_at: string;
+    data: {
+        message: string;
+    };
+}
+
 export type PageProps<
     T extends Record<string, unknown> = Record<string, unknown>
 > = T & {
